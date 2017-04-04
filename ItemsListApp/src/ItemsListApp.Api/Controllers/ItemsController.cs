@@ -14,48 +14,48 @@ namespace ItemsListApp.Api.Controllers
         // GET api/items
         public async Task<IHttpActionResult> GetAsync()
         {
-            var model = await Task.FromResult(GetItems());
+            var allItems = await Task.FromResult(GetItems());
 
-            return Ok(model);
+            return Ok(allItems);
         }
 
         // GET api/v1/items/5
         public async Task<IHttpActionResult> GetAsync(Guid id)
         {
-            var model = await Task.FromResult(new Item
+            var item = await Task.FromResult(new Item
             {
                 Id = id,
                 Text = "Text of required item",
             });
 
-            return Ok(model);
+            return Ok(item);
         }
 
         // POST api/v1/items
         public async Task<IHttpActionResult> PostAsync([FromBody]string text)
         {
-            var model = await Task.FromResult(new Item
+            var newItem = await Task.FromResult(new Item
             {
                 Id = new Guid("97DDD880-D922-4A0D-BB07-E35339F4F5BE"),
                 Text = text
             });
 
-            var location = new Uri(Request.RequestUri, model.Id.ToString());
-            return Created( location, model);
+            var location = new Uri(Request.RequestUri, newItem.Id.ToString());
+            return Created( location, newItem);
         }
 
         // PUT api/v1/items/5
         public async Task<IHttpActionResult> PutAsync([FromBody] Item item)
         {
-            var model = await Task.FromResult(item);
+            var editedItem = await Task.FromResult(item);
 
-            return Ok(model);
+            return Ok(editedItem);
         }
 
         // DELETE api/v1/items/5
         public async Task<IHttpActionResult> DeleteAsync(Guid id)
         {
-            await Task.FromResult(id);
+            await Task.CompletedTask;
 
             return StatusCode(HttpStatusCode.NoContent);
         }
