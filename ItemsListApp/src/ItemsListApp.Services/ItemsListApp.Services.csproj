@@ -57,6 +57,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DependencyRegister.cs" />
+    <Compile Include="Identity\IdGeneratorService.cs" />
     <Compile Include="Items\ItemsService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
