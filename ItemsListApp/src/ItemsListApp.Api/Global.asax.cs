@@ -7,11 +7,12 @@ using System.Web.Routing;
 
 namespace ItemsListApp.Api
 {
-    public class WebApiApplication : System.Web.HttpApplication
+    public class WebApiApplication : HttpApplication
     {
         protected void Application_Start()
         {
             GlobalConfiguration.Configure(WebApiConfig.Register);
+            GlobalConfiguration.Configure(DependenciesConfig.Register);
         }
     }
 }
