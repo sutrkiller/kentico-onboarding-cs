@@ -9,10 +9,12 @@ namespace ItemsListApp.Services.Items
     internal class ItemsService : IItemsService
     {
         private readonly IItemsRepository _itemsRepository;
+        private readonly IIdGeneratorService _idGeneratorService;
 
-        public ItemsService(IItemsRepository itemsRepository)
+        public ItemsService(IItemsRepository itemsRepository, IIdGeneratorService idGeneratorService)
         {
             _itemsRepository = itemsRepository;
+            _idGeneratorService = idGeneratorService;
         }
         public async Task<Item> AddItemAsync(string text)
         {
@@ -21,7 +23,7 @@ namespace ItemsListApp.Services.Items
 
             var newItem = new Item
             {
-                Id = Guid.NewGuid(), 
+                Id = await _idGeneratorService.GenerateIdAsync(), 
                 Text = text,
 
             };

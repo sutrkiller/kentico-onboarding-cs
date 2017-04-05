@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using ItemsListApp.Contracts.Models;
 using NUnit.Framework.Constraints;
 
-namespace ItemsListApp.Api.UnitTests.Helpers
+namespace ItemsListApp.Contracts.UnitTests.Base.Helpers
 {
-    internal static class ItemComparerExtensions
+    public static class ItemComparerExtensions
     {
         private static Lazy<ItemComparer> ItemComparerInstance { get; } = new Lazy<ItemComparer>();
 

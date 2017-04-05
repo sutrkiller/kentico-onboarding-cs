@@ -3,11 +3,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{976410E1-A727-4B98-B04E-3CC379C68210}</ProjectGuid>
+    <ProjectGuid>{9A218573-E912-4D5B-B988-335E9CCB9FF8}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ItemsListApp.Services.UnitTests</RootNamespace>
-    <AssemblyName>ItemsListApp.Services.UnitTests</AssemblyName>
+    <RootNamespace>ItemsListApp.Contracts.UnitTests.Base</RootNamespace>
+    <AssemblyName>ItemsListApp.Contracts.UnitTests.Base</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -35,10 +35,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="NSubstitute, Version=2.0.2.0, Culture=neutral, PublicKeyToken=92dd2e9066daa5ca, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\NSubstitute.2.0.2\lib\net45\NSubstitute.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="nunit.framework, Version=3.6.1.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
       <HintPath>..\..\packages\NUnit.3.6.1\lib\net45\nunit.framework.dll</HintPath>
       <Private>True</Private>
@@ -58,8 +54,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="Tests\Identity\IdGeneratorServiceUnitTests.cs" />
-    <Compile Include="Tests\Items\ItemsServiceUnitTests.cs" />
+    <Compile Include="Helpers\ItemComparerExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -69,14 +64,6 @@
     <ProjectReference Include="..\..\src\ItemsListApp.Contracts\ItemsListApp.Contracts.csproj">
       <Project>{7A2887B3-5F5D-419D-B25A-3DE3B288C058}</Project>
       <Name>ItemsListApp.Contracts</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\src\ItemsListApp.Services\ItemsListApp.Services.csproj">
-      <Project>{6826BFD0-6911-47BD-952B-B66E51B006E2}</Project>
-      <Name>ItemsListApp.Services</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ItemsListApp.Contracts.UnitTests.Base\ItemsListApp.Contracts.UnitTests.Base.csproj">
-      <Project>{9a218573-e912-4d5b-b988-335e9ccb9ff8}</Project>
-      <Name>ItemsListApp.Contracts.UnitTests.Base</Name>
     </ProjectReference>
   </ItemGroup>
   <Choose>
