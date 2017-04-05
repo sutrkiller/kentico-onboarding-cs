@@ -7,7 +7,7 @@ using ItemsListApp.Contracts.Models;
 
 namespace ItemsListApp.Contracts.Repository
 {
-    public interface IItemRepository
+    public interface IItemsRepository
     {
         Task AddAsync(Item item);
 

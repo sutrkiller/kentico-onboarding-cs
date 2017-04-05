@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using ItemsListApp.Api.Models;
+using ItemsListApp.Contracts.Models;
 using NUnit.Framework.Constraints;
 
 namespace ItemsListApp.Api.UnitTests.Helpers

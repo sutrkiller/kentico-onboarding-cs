@@ -13,7 +13,7 @@ namespace ItemsListApp.Repository
     {
         public void Register(IUnityContainer container)
         {
-            container.RegisterType<IItemRepository, ItemRepository>(new ContainerControlledLifetimeManager());
+            container.RegisterType<IItemsRepository, ItemsRepository>(new ContainerControlledLifetimeManager());
         }
     }
 }

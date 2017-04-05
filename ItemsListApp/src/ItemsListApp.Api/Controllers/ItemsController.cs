@@ -2,6 +2,7 @@
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
+using ItemsListApp.Contracts.Api;
 using ItemsListApp.Contracts.Models;
 using ItemsListApp.Contracts.Repository;
 
@@ -11,17 +12,19 @@ namespace ItemsListApp.Api.Controllers
     //api/v1/items
     public class ItemsController : ApiController
     {
-        private readonly IItemRepository _itemsRepository;
+        private readonly IItemsRepository _itemsesRepository;
+        private readonly IItemLocationHelper _itemLocationHelper;
 
-        public ItemsController(IItemRepository itemsRepository)
+        public ItemsController(IItemsRepository itemsesRepository, IItemLocationHelper itemLocationHelper)
         {
-            _itemsRepository = itemsRepository;
+            _itemsesRepository = itemsesRepository;
+            _itemLocationHelper = itemLocationHelper;
         }
 
         // GET api/items
         public async Task<IHttpActionResult> GetAsync()
         {
-            var allItems = await _itemsRepository.GetAllAsync();
+            var allItems = await _itemsesRepository.GetAllAsync();
 
             return Ok(allItems);
         }
@@ -29,7 +32,7 @@ namespace ItemsListApp.Api.Controllers
         // GET api/v1/items/5
         public async Task<IHttpActionResult> GetAsync(Guid id)
         {
-            var item = await _itemsRepository.GetByIdAsync(id);
+            var item = await _itemsesRepository.GetByIdAsync(id);
 
             return Ok(item);
         }
@@ -43,24 +46,24 @@ namespace ItemsListApp.Api.Controllers
                 Text = text
             };
 
-            await _itemsRepository.AddAsync(new Item());
+            await _itemsesRepository.AddAsync(new Item());
+            var location = _itemLocationHelper.CreateLocation(newItem.Id);
 
-            var location = new Uri(Request.RequestUri, newItem.Id.ToString());
             return Created( location, newItem);
         }
 
         // PUT api/v1/items/5
         public async Task<IHttpActionResult> PutAsync([FromBody] Item item)
         {
-             await _itemsRepository.UpdateAsync(item);
+             await _itemsesRepository.UpdateAsync(item);
 
-            return Ok();
+            return Ok(item);
         }
 
         // DELETE api/v1/items/5
         public async Task<IHttpActionResult> DeleteAsync(Guid id)
         {
-            await _itemsRepository.RemoveByIdAsync(id);
+            await _itemsesRepository.RemoveByIdAsync(id);
 
             return StatusCode(HttpStatusCode.NoContent);
         }

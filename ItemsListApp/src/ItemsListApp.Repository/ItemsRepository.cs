@@ -6,7 +6,7 @@ using ItemsListApp.Contracts.Repository;
 
 namespace ItemsListApp.Repository
 {
-    internal class ItemRepository : IItemRepository
+    internal class ItemsRepository : IItemsRepository
     {
         private static readonly Item[] Items = 
         {
@@ -24,7 +24,11 @@ namespace ItemsListApp.Repository
 
         public async Task<Item> GetByIdAsync(Guid id)
         {
-            return await Task.FromResult(Items[0]);
+            return await Task.FromResult(new Item
+            {
+                Id = id,
+                Text = "New dummy text",
+            });
         }
 
         public async Task<IQueryable<Item>> GetAllAsync()
