@@ -13,6 +13,7 @@ namespace ItemsListApp.Api
 
             Register<Repository.DependencyRegister>(container);
             Register<DependencyRegister>(container);
+            Register<Services.DependencyRegister>(container);
         
             httpConfig.DependencyResolver = new UnityResolver(container);
         }

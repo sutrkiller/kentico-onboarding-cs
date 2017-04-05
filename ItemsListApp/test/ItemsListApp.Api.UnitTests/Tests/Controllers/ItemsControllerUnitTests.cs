@@ -11,6 +11,7 @@ using ItemsListApp.Api.UnitTests.Helpers;
 using ItemsListApp.Contracts.Api;
 using ItemsListApp.Contracts.Models;
 using ItemsListApp.Contracts.Repository;
+using ItemsListApp.Contracts.Services;
 using NSubstitute;
 using NUnit.Framework;
 using Assert = NUnit.Framework.Assert;
@@ -23,15 +24,17 @@ namespace ItemsListApp.Api.UnitTests.Tests.Controllers
         private ItemsController _itemsController;
 
         private IItemsRepository _itemsRepository;
+        private IItemsService _itemsService;
         private IItemLocationHelper _itemLocationHelper;
 
         [SetUp]
         public void SetUp()
         {
             _itemsRepository = Substitute.For<IItemsRepository>();
+            _itemsService = Substitute.For<IItemsService>();
             _itemLocationHelper = Substitute.For<IItemLocationHelper>();
 
-            _itemsController = new ItemsController(_itemsRepository, _itemLocationHelper)
+            _itemsController = new ItemsController(_itemsRepository, _itemsService, _itemLocationHelper)
             {
                 Request = new HttpRequestMessage(),
                 Configuration = new HttpConfiguration(),
@@ -89,6 +92,7 @@ namespace ItemsListApp.Api.UnitTests.Tests.Controllers
                 Text = "Something extremely creative",
             };
             _itemLocationHelper.CreateLocation(itemId).Returns($"dummy location/{itemId}");
+            _itemsService.AddItemAsync(expected.Text).Returns(expected);
 
             var action = await _itemsController.PostAsync(expected.Text);
             var response = await action.ExecuteAsync(CancellationToken.None);
@@ -97,7 +101,7 @@ namespace ItemsListApp.Api.UnitTests.Tests.Controllers
 
             Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Created));
             Assert.That(actual, Is.EqualTo(expected).UsingItemComparer());
-            Assert.That(response.Headers.Location.ToString(), Does.EndWith(expected.Id.ToString()));
+            Assert.That(response.Headers.Location.ToString(), Does.EndWith(expected.Id.ToString()).IgnoreCase);
         }
 
         [Test]

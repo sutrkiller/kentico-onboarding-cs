@@ -2,10 +2,11 @@
 using System.Threading.Tasks;
 using ItemsListApp.Contracts.Models;
 using ItemsListApp.Contracts.Repository;
+using ItemsListApp.Contracts.Services;
 
 namespace ItemsListApp.Services.Items
 {
-    public class ItemsService
+    internal class ItemsService : IItemsService
     {
         private readonly IItemsRepository _itemsRepository;
 
@@ -20,7 +21,7 @@ namespace ItemsListApp.Services.Items
 
             var newItem = new Item
             {
-                Id = Guid.NewGuid(),
+                Id = Guid.NewGuid(), 
                 Text = text,
 
             };

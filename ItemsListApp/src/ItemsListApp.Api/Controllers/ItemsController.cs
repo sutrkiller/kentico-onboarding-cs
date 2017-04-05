@@ -5,6 +5,7 @@ using System.Web.Http;
 using ItemsListApp.Contracts.Api;
 using ItemsListApp.Contracts.Models;
 using ItemsListApp.Contracts.Repository;
+using ItemsListApp.Contracts.Services;
 
 namespace ItemsListApp.Api.Controllers
 {
@@ -12,11 +13,13 @@ namespace ItemsListApp.Api.Controllers
     public class ItemsController : ApiController
     {
         private readonly IItemsRepository _itemsesRepository;
+        private readonly IItemsService _itemsService;
         private readonly IItemLocationHelper _itemLocationHelper;
 
-        public ItemsController(IItemsRepository itemsesRepository, IItemLocationHelper itemLocationHelper)
+        public ItemsController(IItemsRepository itemsesRepository, IItemsService itemsService, IItemLocationHelper itemLocationHelper)
         {
             _itemsesRepository = itemsesRepository;
+            _itemsService = itemsService;
             _itemLocationHelper = itemLocationHelper;
         }
 
@@ -39,13 +42,7 @@ namespace ItemsListApp.Api.Controllers
         // POST api/v1/items
         public async Task<IHttpActionResult> PostAsync([FromBody] string text)
         {
-            var newItem = new Item
-            {
-                Id = new Guid("97DDD880-D922-4A0D-BB07-E35339F4F5BE"),
-                Text = text
-            };
-
-            await _itemsesRepository.AddAsync(new Item());
+            var newItem = await _itemsService.AddItemAsync(text);
             var location = _itemLocationHelper.CreateLocation(newItem.Id);
 
             return Created(location, newItem);

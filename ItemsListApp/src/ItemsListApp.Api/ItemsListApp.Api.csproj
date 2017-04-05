@@ -131,6 +131,10 @@
       <Project>{810f86ba-461a-4087-9fbb-89218ee4eae8}</Project>
       <Name>ItemsListApp.Repository</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ItemsListApp.Services\ItemsListApp.Services.csproj">
+      <Project>{6826bfd0-6911-47bd-952b-b66e51b006e2}</Project>
+      <Name>ItemsListApp.Services</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
