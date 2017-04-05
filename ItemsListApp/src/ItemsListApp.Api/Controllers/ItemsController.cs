@@ -8,7 +8,6 @@ using ItemsListApp.Contracts.Repository;
 
 namespace ItemsListApp.Api.Controllers
 {
-
     //api/v1/items
     public class ItemsController : ApiController
     {
@@ -38,7 +37,7 @@ namespace ItemsListApp.Api.Controllers
         }
 
         // POST api/v1/items
-        public async Task<IHttpActionResult> PostAsync([FromBody]string text)
+        public async Task<IHttpActionResult> PostAsync([FromBody] string text)
         {
             var newItem = new Item
             {
@@ -49,13 +48,13 @@ namespace ItemsListApp.Api.Controllers
             await _itemsesRepository.AddAsync(new Item());
             var location = _itemLocationHelper.CreateLocation(newItem.Id);
 
-            return Created( location, newItem);
+            return Created(location, newItem);
         }
 
         // PUT api/v1/items/5
         public async Task<IHttpActionResult> PutAsync([FromBody] Item item)
         {
-             await _itemsesRepository.UpdateAsync(item);
+            await _itemsesRepository.UpdateAsync(item);
 
             return Ok(item);
         }
