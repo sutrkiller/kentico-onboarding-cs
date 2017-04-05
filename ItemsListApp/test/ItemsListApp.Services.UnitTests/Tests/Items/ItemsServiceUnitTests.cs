@@ -11,12 +11,13 @@ namespace ItemsListApp.Services.UnitTests.Tests.Items
     public class ItemsServiceUnitTests
     {
         private ItemsService _itemsService;
+        private IItemsRepository _itemsRepository;
 
         [SetUp]
         public void SetUp()
         {
-            var itemsRepository = Substitute.For<IItemsRepository>();
-            _itemsService = new ItemsService(itemsRepository);
+            _itemsRepository = Substitute.For<IItemsRepository>();
+            _itemsService = new ItemsService(_itemsRepository);
         }
 
         [Test]
@@ -44,7 +45,16 @@ namespace ItemsListApp.Services.UnitTests.Tests.Items
         public void AddItemAsync_emptyString_throwsArgumentExcepction()
         {
             Assert.That(async () => await _itemsService.AddItemAsync(""),
-                Throws.ArgumentNullException
+                Throws.ArgumentException
+                    .With.Property("ParamName")
+                    .EqualTo("text"));
+        }
+
+        [Test]
+        public void AddItemAsync_whiteSpaceString_throwsArgumentExcepction()
+        {
+            Assert.That(async () => await _itemsService.AddItemAsync("   "),
+                Throws.ArgumentException
                     .With.Property("ParamName")
                     .EqualTo("text"));
         }
