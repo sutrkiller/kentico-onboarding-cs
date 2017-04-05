@@ -5,7 +5,7 @@ using Microsoft.Practices.Unity;
 
 namespace ItemsListApp.Api.DependencyInjection
 {
-    public class UnityResolver : IDependencyResolver
+    internal class UnityResolver : IDependencyResolver
     {
         private readonly IUnityContainer _container;
 
