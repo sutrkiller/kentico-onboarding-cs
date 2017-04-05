@@ -8,7 +8,7 @@ namespace ItemsListApp.Repository
 {
     internal class ItemsRepository : IItemsRepository
     {
-        private static readonly Item[] Items = 
+        private static readonly Item[] Items =
         {
             new Item {Id = new Guid("A3672C82-AF6C-44AD-836E-D1C26A0A6359"), Text = "Dummy text 1"},
             new Item {Id = new Guid("F5CFB0AF-EB26-478B-AF41-7DA314458706"), Text = "Dummy text 2"},
@@ -18,32 +18,22 @@ namespace ItemsListApp.Repository
         };
 
         public async Task AddAsync(Item item)
-        {
-            await Task.CompletedTask;
-        }
+            => await Task.CompletedTask;
 
         public async Task<Item> GetByIdAsync(Guid id)
-        {
-            return await Task.FromResult(new Item
+            => await Task.FromResult(new Item
             {
                 Id = id,
                 Text = "New dummy text",
             });
-        }
 
         public async Task<IQueryable<Item>> GetAllAsync()
-        {
-            return await Task.FromResult(Items.AsQueryable());
-        }
+            => await Task.FromResult(Items.AsQueryable());
 
         public async Task UpdateAsync(Item item)
-        {
-            await Task.CompletedTask;
-        }
+            => await Task.CompletedTask;
 
         public async Task<Item> RemoveByIdAsync(Guid id)
-        {
-            return await Task.FromResult(Items[3]);
-        }
+            => await Task.FromResult(Items[3]);
     }
 }

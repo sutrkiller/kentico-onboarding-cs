@@ -55,7 +55,5 @@ namespace ItemsListApp.Api.UnitTests.Tests.Helpers
             _httpRequestMessage.Properties.Add(HttpPropertyKeys.HttpConfigurationKey, configuration);
             _httpRequestMessage.Properties.Add(HttpPropertyKeys.HttpRouteDataKey, routeData);
         }
-
-
     }
 }

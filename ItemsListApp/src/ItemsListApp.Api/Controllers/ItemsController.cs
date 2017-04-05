@@ -40,12 +40,35 @@ namespace ItemsListApp.Api.Controllers
         }
 
         // POST api/v1/items
-        public async Task<IHttpActionResult> PostAsync([FromBody] string text)
+        public async Task<IHttpActionResult> PostAsync([FromBody] Item item)
         {
-            var newItem = await _itemsService.AddItemAsync(text);
+            ValidatePostedItem(item);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var newItem = await _itemsService.AddItemAsync(item);
             var location = _itemLocationHelper.CreateLocation(newItem.Id);
 
             return Created(location, newItem);
+        }
+
+        private void ValidatePostedItem(Item item)
+        {
+            if (item == null)
+            {
+                ModelState.AddModelError(nameof(item), "Body format is not correct");
+                return;
+            }
+            if (item.Id != default(Guid))
+            {
+                ModelState.AddModelError(nameof(item.Id), "Item must not contain identifier");
+            }
+            if (string.IsNullOrWhiteSpace(item.Text))
+            {
+                ModelState.AddModelError(nameof(item.Text), "Item text is not valid");
+            }
         }
 
         // PUT api/v1/items/5

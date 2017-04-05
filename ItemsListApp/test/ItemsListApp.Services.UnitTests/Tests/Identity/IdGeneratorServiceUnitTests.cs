@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using ItemsListApp.Services.Identity;
 using NUnit.Framework;
-using NUnit.Framework.Internal;
 
 namespace ItemsListApp.Services.UnitTests.Tests.Identity
 {

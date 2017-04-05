@@ -13,6 +13,7 @@ namespace ItemsListApp.Api.Helpers
         {
             _requestMessage = requestMessage;
         }
+
         public string CreateLocation(Guid id)
         {
             var urlHelper = new UrlHelper(_requestMessage);

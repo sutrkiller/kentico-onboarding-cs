@@ -35,38 +35,14 @@ namespace ItemsListApp.Services.UnitTests.Tests.Items
                 Id = id,
                 Text = text,
             };
+            Item storedItem = null;
             _idGeneratorService.GenerateIdAsync().Returns(id);
+            _itemsRepository.AddAsync(Arg.Do<Item>(item => { storedItem = item; })).Returns(Task.CompletedTask);
 
-            var newItem = await _itemsService.AddItemAsync(text);
+            var newItem = await _itemsService.AddItemAsync(expectedItem);
 
+            Assert.That(storedItem, Is.EqualTo(expectedItem).UsingItemComparer());
             Assert.That(newItem, Is.EqualTo(expectedItem).UsingItemComparer());
-        }
-
-        [Test]
-        public void AddItemAsync_null_throwsArgumentNullExcepction()
-        {
-            Assert.That(async () => await _itemsService.AddItemAsync(null),
-                Throws.ArgumentNullException
-                .With.Property("ParamName")
-                .EqualTo("text"));
-        }
-
-        [Test]
-        public void AddItemAsync_emptyString_throwsArgumentExcepction()
-        {
-            Assert.That(async () => await _itemsService.AddItemAsync(""),
-                Throws.ArgumentException
-                    .With.Property("ParamName")
-                    .EqualTo("text"));
-        }
-
-        [Test]
-        public void AddItemAsync_whiteSpaceString_throwsArgumentExcepction()
-        {
-            Assert.That(async () => await _itemsService.AddItemAsync("   "),
-                Throws.ArgumentException
-                    .With.Property("ParamName")
-                    .EqualTo("text"));
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -83,25 +84,41 @@ namespace ItemsListApp.Api.UnitTests.Tests.Controllers
         }
 
         [Test]
-        public async Task Post_ValidText_ReturnsCreatedItem()
+        public async Task Post_ValidItem_ReturnsCreatedItem()
         {
             var itemId = new Guid("97DDD880-D922-4A0D-BB07-E35339F4F5BE");
+            var postItem = new Item
+            {
+                Text = "Something extremely creative",
+            };
             var expected = new Item
             {
                 Id = itemId,
-                Text = "Something extremely creative",
+                Text = postItem.Text,
             };
             _itemLocationHelper.CreateLocation(itemId).Returns($"dummy location/{itemId}");
-            _itemsService.AddItemAsync(expected.Text).Returns(expected);
+            _itemsService.AddItemAsync(postItem).Returns(expected);
 
-            var action = await _itemsController.PostAsync(expected.Text);
+            var action = await _itemsController.PostAsync(postItem);
             var response = await action.ExecuteAsync(CancellationToken.None);
             Item actual;
             response.TryGetContentValue(out actual);
 
             Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Created));
             Assert.That(actual, Is.EqualTo(expected).UsingItemComparer());
-            Assert.That(response.Headers.Location.ToString(), Does.EndWith(expected.Id.ToString()).IgnoreCase);
+            Assert.That(response.Headers.Location.ToString(), Does.EndWith(itemId.ToString()).IgnoreCase);
+        }
+
+        [Test, TestCaseSource(typeof(InvalidPostTestCases))]
+        public async Task Post_InvalidItem_ReturnsBadRequest(Item postItem, IEnumerable<string> modelStateErrorKeys)
+        {
+            var action = await _itemsController.PostAsync(postItem);
+            var response = await action.ExecuteAsync(CancellationToken.None);
+            HttpError actual;
+            response.TryGetContentValue(out actual);
+
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+            Assert.That(actual.ModelState.Keys, Is.EquivalentTo(modelStateErrorKeys).IgnoreCase);
         }
 
         [Test]
@@ -131,6 +148,65 @@ namespace ItemsListApp.Api.UnitTests.Tests.Controllers
             var response = await action.ExecuteAsync(CancellationToken.None);
 
             Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NoContent));
+        }
+
+        private class InvalidPostTestCases : IEnumerable<TestCaseData>
+        {
+            public IEnumerator<TestCaseData> GetEnumerator()
+            {
+                yield return new TestCaseData(
+                    new Item
+                    {
+                        Id = new Guid("999EA6F0-4139-4D54-B4DD-4976A35D1DFA"),
+                        Text = "Something extremely creative",
+                    },
+                    new[] {nameof(Item.Id)}
+                );
+
+                yield return new TestCaseData(
+                    new Item
+                    {
+                        Text = string.Empty,
+                    },
+                    new[] {nameof(Item.Text)}
+                );
+
+                yield return new TestCaseData(
+                    new Item
+                    {
+                        Text = "   ",
+                    },
+                    new[] {nameof(Item.Text)}
+                );
+
+                yield return new TestCaseData(
+                    new Item
+                    {
+                        Text = null,
+                    },
+                    new[] {nameof(Item.Text)}
+                );
+
+                yield return new TestCaseData(
+                    new Item
+                    {
+                        Id = new Guid("999EA6F0-4139-4D54-B4DD-4976A35D1DFA"),
+                        Text = String.Empty,
+                    },
+                    new[]
+                    {
+                        nameof(Item.Id),
+                        nameof(Item.Text)
+                    }
+                );
+
+                yield return new TestCaseData(null, new[] {nameof(Item)});
+            }
+
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                return GetEnumerator();
+            }
         }
     }
 }

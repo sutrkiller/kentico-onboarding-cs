@@ -5,6 +5,6 @@ namespace ItemsListApp.Contracts.Services
 {
     public interface IItemsService
     {
-        Task<Item> AddItemAsync(string text);
+        Task<Item> AddItemAsync(Item item);
     }
 }

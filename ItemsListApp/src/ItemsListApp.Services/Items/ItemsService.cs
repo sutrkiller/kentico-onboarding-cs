@@ -16,16 +16,12 @@ namespace ItemsListApp.Services.Items
             _itemsRepository = itemsRepository;
             _idGeneratorService = idGeneratorService;
         }
-        public async Task<Item> AddItemAsync(string text)
+        public async Task<Item> AddItemAsync(Item item)
         {
-            if (text == null) throw new ArgumentNullException(nameof(text));
-            if (string.IsNullOrWhiteSpace(text)) throw new ArgumentException("Text cannot be empty", nameof(text));
-
             var newItem = new Item
             {
                 Id = await _idGeneratorService.GenerateIdAsync(), 
-                Text = text,
-
+                Text = item.Text,
             };
 
             await _itemsRepository.AddAsync(newItem);
