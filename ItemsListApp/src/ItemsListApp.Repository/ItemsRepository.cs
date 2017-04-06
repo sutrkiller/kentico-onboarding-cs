@@ -24,7 +24,7 @@ namespace ItemsListApp.Repository
 
         public async Task<Item> GetByIdAsync(Guid id)
         {
-            var result = await _dbCollection.FindAsync(value => value.Id == id);
+            var result = await _dbCollection.FindAsync(value => value.Id == id, new FindOptions<Item> {Limit = 1});
             return await result.FirstOrDefaultAsync();
         }
 

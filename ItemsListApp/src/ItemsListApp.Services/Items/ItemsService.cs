@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using ItemsListApp.Contracts.Models;
 using ItemsListApp.Contracts.Repository;
 using ItemsListApp.Contracts.Services;
@@ -25,6 +27,26 @@ namespace ItemsListApp.Services.Items
 
             await _itemsRepository.AddAsync(newItem);
             return newItem;
+        }
+
+        public async Task<Item> GetByIdAsync(Guid id)
+        {
+            return await _itemsRepository.GetByIdAsync(id);
+        }
+
+        public async Task<IEnumerable<Item>> GetAllAsync()
+        {
+            return await _itemsRepository.GetAllAsync();
+        }
+
+        public async Task PutAsync(Item item)
+        {
+            await _itemsRepository.UpdateAsync(item);
+        }
+
+        public async Task<Item> RemoveByIdAsync(Guid id)
+        {
+            return await _itemsRepository.RemoveByIdAsync(id);
         }
     }
 }

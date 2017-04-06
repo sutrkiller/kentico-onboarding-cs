@@ -6,6 +6,7 @@ using ItemsListApp.Contracts.Services;
 using ItemsListApp.Contracts.UnitTests.Base.Helpers;
 using ItemsListApp.Services.Items;
 using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 using NUnit.Framework;
 
 namespace ItemsListApp.Services.UnitTests.Tests.Items
@@ -26,7 +27,7 @@ namespace ItemsListApp.Services.UnitTests.Tests.Items
         }
 
         [Test]
-        public async Task AddItemAsync_validText_returnsNewItemWithIdAndCorrectProperties()
+        public async Task AddItemAsync_ValidText_ReturnsNewItemWithIdAndCorrectProperties()
         {
             var id = Guid.NewGuid();
             var text = "text of new item";
@@ -43,6 +44,55 @@ namespace ItemsListApp.Services.UnitTests.Tests.Items
 
             Assert.That(storedItem, Is.EqualTo(expectedItem).UsingItemComparer());
             Assert.That(newItem, Is.EqualTo(expectedItem).UsingItemComparer());
+        }
+
+        [Test]
+        public async Task GetItemByIdAsync_ExistingId_ReturnsItemWithThisId()
+        {
+            var expected = new Item
+            {
+                Id = new Guid("95AB19B6-455B-469C-83AA-CD505E9389BD"),
+                Text = "cool text",
+            };
+            _itemsRepository.GetByIdAsync(expected.Id).Returns(expected);
+
+            var item = await _itemsService.GetByIdAsync(expected.Id);
+
+            Assert.That(item, Is.EqualTo(expected).UsingItemComparer());
+        }
+
+        [Test]
+        public async Task GetItemByIdAsync_NonExistingId_ReturnsNull()
+        {
+            var id = new Guid("95AB19B6-455B-469C-83AA-CD505E9389BD");
+            _itemsRepository.GetByIdAsync(id).Returns((Item) null);
+
+            var item = await _itemsService.GetByIdAsync(id);
+
+            Assert.That(item, Is.Null);
+        }
+
+        [Test]
+        public async Task GetAllAsync_ReturnsCollectionOfItems()
+        {
+            var expected = new[]
+            {
+                new Item
+                {
+                    Id = new Guid("95AB19B6-455B-469C-83AA-CD505E9389BD"),
+                    Text = "cool text",
+                },
+                new Item
+                {
+                    Id = new Guid("95AB19B6-455B-469C-83AA-CD505E9389ce"),
+                    Text = "cool text 2",
+                },
+            };
+            _itemsRepository.GetAllAsync().Returns(expected);
+
+            var items = await _itemsService.GetAllAsync();
+
+            Assert.That(items, Is.EqualTo(expected).AsCollection.UsingItemComparer());
         }
     }
 }
