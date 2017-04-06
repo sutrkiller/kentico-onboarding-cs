@@ -102,7 +102,7 @@ namespace ItemsListApp.Services.UnitTests.Tests.Items
                 Id = new Guid("95AB19B6-455B-469C-83AA-CD505E9389BD"),
                 Text = "cool text",
             };
-            _itemsRepository.UpdateAsync(expected).Returns(expected);
+            _itemsRepository.GetByIdAsync(expected.Id).Returns(expected);
 
             var item = await _itemsService.PutAsync(expected);
 
@@ -117,7 +117,6 @@ namespace ItemsListApp.Services.UnitTests.Tests.Items
                 Id = new Guid("95AB19B6-455B-469C-83AA-CD505E9389BD"),
                 Text = "cool text",
             };
-            _itemsRepository.UpdateAsync(expected).Returns((Item) null);
 
             var item = await _itemsService.PutAsync(expected);
 

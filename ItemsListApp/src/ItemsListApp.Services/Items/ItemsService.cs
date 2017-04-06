@@ -19,10 +19,13 @@ namespace ItemsListApp.Services.Items
         }
         public async Task<Item> AddItemAsync(Item item)
         {
+            var creationTime = DateTime.Now;
             var newItem = new Item
             {
                 Id = await _idGeneratorService.GenerateIdAsync(), 
                 Text = item.Text,
+                CreationTime = creationTime,
+                LastUpdateTime = creationTime,
             };
 
             await _itemsRepository.AddAsync(newItem);
@@ -30,23 +33,25 @@ namespace ItemsListApp.Services.Items
         }
 
         public async Task<Item> GetByIdAsync(Guid id)
-        {
-            return await _itemsRepository.GetByIdAsync(id);
-        }
+            => await _itemsRepository.GetByIdAsync(id);
 
-        public async Task<IEnumerable<Item>> GetAllAsync()
-        {
-            return await _itemsRepository.GetAllAsync();
-        }
+        public async Task<IEnumerable<Item>> GetAllAsync() 
+            => await _itemsRepository.GetAllAsync();
 
         public async Task<Item> PutAsync(Item item)
         {
-            return await _itemsRepository.UpdateAsync(item);
+            var original = await _itemsRepository.GetByIdAsync(item.Id);
+            if (original == null) return null;
+
+            original.Text = item.Text;
+            original.LastUpdateTime = DateTime.Now;
+
+            await _itemsRepository.UpdateAsync(original);
+
+            return original;
         }
 
         public async Task<Item> RemoveByIdAsync(Guid id)
-        {
-            return await _itemsRepository.RemoveByIdAsync(id);
-        }
+            => await _itemsRepository.RemoveByIdAsync(id);
     }
 }

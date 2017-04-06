@@ -13,7 +13,7 @@ namespace ItemsListApp.Contracts.Repository
 
         Task<IEnumerable<Item>> GetAllAsync();
 
-        Task<Item> UpdateAsync(Item item);
+        Task UpdateAsync(Item item);
 
         Task<Item> RemoveByIdAsync(Guid id);
     }

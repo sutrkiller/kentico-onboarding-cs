@@ -34,10 +34,8 @@ namespace ItemsListApp.Api.UnitTests.Helpers
             return this;
         }
 
-        public TestCaseData Build()
-        {
-            return new TestCaseData(Item, _invalidParts);
-        }
+        public TestCaseData Build() 
+            => new TestCaseData(Item, _invalidParts);
 
         public TestCaseData InvalidItem()
         {

@@ -1,8 +1,10 @@
-﻿using System.Net.Http;
+﻿using System.Configuration;
+using System.Net.Http;
 using System.Web;
 using ItemsListApp.Api.Helpers;
 using ItemsListApp.Contracts.Api;
 using ItemsListApp.Contracts.DependecnyInjection;
+using ItemsListApp.Contracts.Repository;
 using Microsoft.Practices.Unity;
 
 namespace ItemsListApp.Api
@@ -15,6 +17,14 @@ namespace ItemsListApp.Api
                 new HierarchicalLifetimeManager(),
                 new InjectionFactory(GetCurrentRequestMessage));
             container.RegisterType<IItemLocationHelper, ItemLocationHelper>(new HierarchicalLifetimeManager());
+
+            const string databaseName = "items_list_app_db";
+            container.RegisterInstance(typeof(ConnectionOptions),
+                new ConnectionOptions
+                {
+                    ConnectionString = ConfigurationManager.ConnectionStrings["MongoDbConnection"]?.ConnectionString,
+                    DatabaseName = databaseName,
+                });
         }
 
         private static HttpRequestMessage GetCurrentRequestMessage(IUnityContainer container)
