@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http;
 using ItemsListApp.Api.Controllers;
+using ItemsListApp.Api.UnitTests.Helpers;
 using ItemsListApp.Contracts.Api;
 using ItemsListApp.Contracts.Models;
 using ItemsListApp.Contracts.Repository;
@@ -154,53 +155,36 @@ namespace ItemsListApp.Api.UnitTests.Tests.Controllers
         {
             public IEnumerator<TestCaseData> GetEnumerator()
             {
-                yield return new TestCaseData(
-                    new Item
-                    {
-                        Id = new Guid("999EA6F0-4139-4D54-B4DD-4976A35D1DFA"),
-                        Text = "Something extremely creative",
-                    },
-                    new[] {nameof(Item.Id)}
-                );
+                yield return new ItemTestCaseBuilder()
+                    .Id(new Guid("999EA6F0-4139-4D54-B4DD-4976A35D1DFA"))
+                    .Text("Something extremely creative")
+                    .InvalidParts(nameof(Item.Id))
+                    .Build();
 
-                yield return new TestCaseData(
-                    new Item
-                    {
-                        Text = string.Empty,
-                    },
-                    new[] {nameof(Item.Text)}
-                );
+                yield return new ItemTestCaseBuilder()
+                    .Text(string.Empty)
+                    .InvalidParts(nameof(Item.Text))
+                    .Build();
 
-                yield return new TestCaseData(
-                    new Item
-                    {
-                        Text = "   ",
-                    },
-                    new[] {nameof(Item.Text)}
-                );
+                yield return new ItemTestCaseBuilder()
+                    .Text("   ")
+                    .InvalidParts(nameof(Item.Text))
+                    .Build();
 
-                yield return new TestCaseData(
-                    new Item
-                    {
-                        Text = null,
-                    },
-                    new[] {nameof(Item.Text)}
-                );
+                yield return new ItemTestCaseBuilder()
+                    .Text(null)
+                    .InvalidParts(nameof(Item.Text))
+                    .Build();
 
-                yield return new TestCaseData(
-                    new Item
-                    {
-                        Id = new Guid("999EA6F0-4139-4D54-B4DD-4976A35D1DFA"),
-                        Text = String.Empty,
-                    },
-                    new[]
-                    {
-                        nameof(Item.Id),
-                        nameof(Item.Text)
-                    }
-                );
+                yield return new ItemTestCaseBuilder()
+                    .Id(new Guid("999EA6F0-4139-4D54-B4DD-4976A35D1DFA"))
+                    .Text(string.Empty)
+                    .InvalidParts(nameof(Item.Id), nameof(Item.Text))
+                    .Build();
 
-                yield return new TestCaseData(null, new[] {nameof(Item)});
+                yield return new ItemTestCaseBuilder()
+                    .InvalidParts(nameof(Item))
+                    .Build();
             }
 
             IEnumerator IEnumerable.GetEnumerator()
