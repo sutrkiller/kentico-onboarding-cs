@@ -10,5 +10,7 @@ namespace ItemsListApp.Contracts.Services
         Task<Item> CreateNewAsync(Item item);
 
         Task<Item> ReplaceExistingAsync(Item item);
+
+        Task<bool> ExistsAsync(Guid id);
     }
 }

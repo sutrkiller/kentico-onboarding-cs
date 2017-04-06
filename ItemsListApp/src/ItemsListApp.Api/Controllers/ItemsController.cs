@@ -16,7 +16,8 @@ namespace ItemsListApp.Api.Controllers
         private readonly IItemsRepository _itemsRepository;
         private readonly IItemLocationHelper _itemLocationHelper;
 
-        public ItemsController(IItemsService itemsService, IItemsRepository itemsRepository, IItemLocationHelper itemLocationHelper)
+        public ItemsController(IItemsService itemsService, IItemsRepository itemsRepository,
+            IItemLocationHelper itemLocationHelper)
         {
             _itemsService = itemsService;
             _itemsRepository = itemsRepository;
@@ -75,13 +76,15 @@ namespace ItemsListApp.Api.Controllers
                 return BadRequest(ModelState);
             }
 
-            var editedItem = await _itemsService.ReplaceExistingAsync(item);
-            if (editedItem == null)
+            if (await _itemsService.ExistsAsync(item.Id))
             {
-                return NotFound();
+                var editedItem = await _itemsService.ReplaceExistingAsync(item);
+                return Ok(editedItem);
             }
 
-            return Ok(editedItem);
+            var created = await _itemsService.CreateNewAsync(item); //should be created with item.Id (probably)
+            var location = _itemLocationHelper.CreateLocation(created.Id);
+            return Created(location, created);
         }
 
         // DELETE api/v1/items/5

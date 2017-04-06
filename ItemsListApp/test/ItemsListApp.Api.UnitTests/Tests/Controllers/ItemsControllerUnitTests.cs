@@ -158,6 +158,7 @@ namespace ItemsListApp.Api.UnitTests.Tests.Controllers
                 Id = new Guid("999EA6F0-4139-4D54-B4DD-4976A35D1DFA"),
                 Text = "InvalidateText of required item",
             };
+            _itemsService.ExistsAsync(expected.Id).Returns(true);
             _itemsService.ReplaceExistingAsync(expected).Returns(expected);
 
             var action = await _itemsController.PutAsync(expected);
@@ -170,19 +171,28 @@ namespace ItemsListApp.Api.UnitTests.Tests.Controllers
         }
 
         [Test]
-        public async Task Put_ItemWithNonExistingId_ReturnsNoContent()
+        public async Task Put_ItemWithNonExistingId_ReturnNewItem()
         {
+            var putItem = new Item
+            {
+                Id = new Guid("3C4A53C3-C24F-4755-B871-9F2059A09F74"),
+                Text = "InvalidateText of required item",
+            };
             var expected = new Item
             {
                 Id = new Guid("999EA6F0-4139-4D54-B4DD-4976A35D1DFA"),
-                Text = "InvalidateText of required item",
+                Text = putItem.Text,
             };
-            _itemsService.ReplaceExistingAsync(expected).Returns((Item) null);
+            _itemsService.ExistsAsync(putItem.Id).Returns(false);
+            _itemsService.CreateNewAsync(putItem).Returns(expected);
 
-            var action = await _itemsController.PutAsync(expected);
+            var action = await _itemsController.PutAsync(putItem);
             var response = await action.ExecuteAsync(CancellationToken.None);
+            Item actual;
+            response.TryGetContentValue(out actual);
 
-            Assert.That(response.StatusCode,Is.EqualTo(HttpStatusCode.NotFound));
+            Assert.That(response.StatusCode,Is.EqualTo(HttpStatusCode.Created));
+            Assert.That(actual, Is.EqualTo(expected).UsingItemComparer());
         }
 
         [Test, TestCaseSource(typeof(InvalidPutTestCases))]

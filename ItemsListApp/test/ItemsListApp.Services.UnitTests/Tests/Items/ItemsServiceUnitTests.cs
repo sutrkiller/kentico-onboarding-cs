@@ -86,18 +86,29 @@ namespace ItemsListApp.Services.UnitTests.Tests.Items
         }
 
         [Test]
-        public async Task PutAsync_InvalidItem_ReturnsNull()
+        public async Task ExistsAsync_ExistingId_ReturnsTrue()
         {
-            var expected = new Item
+            var repositoryItem = new Item
             {
                 Id = new Guid("95AB19B6-455B-469C-83AA-CD505E9389BD"),
-                Text = "cool text",
+                Text = "other text",
             };
-            _itemsRepository.GetByIdAsync(expected.Id).Returns(null as Item);
+            _itemsRepository.GetByIdAsync(repositoryItem.Id).Returns(repositoryItem);
 
-            var item = await _itemsService.ReplaceExistingAsync(expected);
+            var exists = await _itemsService.ExistsAsync(repositoryItem.Id);
 
-            Assert.That(item, Is.Null);
+            Assert.That(exists);
+        }
+
+        [Test]
+        public async Task ExistsAsync_NonExistingId_ReturnsTrue()
+        {
+            var id = new Guid("95AB19B6-455B-469C-83AA-CD505E9389BD");
+            _itemsRepository.GetByIdAsync(id).Returns((Item)null);
+
+            var exists = await _itemsService.ExistsAsync(id);
+
+            Assert.That(!exists);
         }
     }
 }
