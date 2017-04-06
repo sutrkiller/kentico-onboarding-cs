@@ -39,9 +39,9 @@ namespace ItemsListApp.Services.Items
             return await _itemsRepository.GetAllAsync();
         }
 
-        public async Task PutAsync(Item item)
+        public async Task<Item> PutAsync(Item item)
         {
-            await _itemsRepository.UpdateAsync(item);
+            return await _itemsRepository.UpdateAsync(item);
         }
 
         public async Task<Item> RemoveByIdAsync(Guid id)

@@ -5,19 +5,20 @@ using NUnit.Framework;
 
 namespace ItemsListApp.Api.UnitTests.Helpers
 {
-    internal class ItemTestCaseBuilder
+    internal abstract class ItemTestCaseBuilder
     {
-        private readonly Lazy<Item> _item = new Lazy<Item>(CreateNewItem);
+        private readonly Lazy<Item> _item;
 
-        private static Item CreateNewItem()
-            => new Item
-            {
-                Text = "Something realllly creative"
-            };
+        protected abstract Item CreateValidItem();
 
         private readonly HashSet<string> _invalidParts = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         private Item Item => _item.Value;
+
+        protected ItemTestCaseBuilder()
+        {
+            _item = new Lazy<Item>(CreateValidItem);
+        }
 
         public ItemTestCaseBuilder InvalidateId(Guid id)
         {
@@ -35,7 +36,7 @@ namespace ItemsListApp.Api.UnitTests.Helpers
 
         public TestCaseData Build()
         {
-         return new TestCaseData(Item, _invalidParts);
+            return new TestCaseData(Item, _invalidParts);
         }
 
         public TestCaseData InvalidItem()

@@ -10,7 +10,6 @@ using ItemsListApp.Api.Controllers;
 using ItemsListApp.Api.UnitTests.Helpers;
 using ItemsListApp.Contracts.Api;
 using ItemsListApp.Contracts.Models;
-using ItemsListApp.Contracts.Repository;
 using ItemsListApp.Contracts.Services;
 using ItemsListApp.Contracts.UnitTests.Base.Helpers;
 using NSubstitute;
@@ -24,18 +23,16 @@ namespace ItemsListApp.Api.UnitTests.Tests.Controllers
     {
         private ItemsController _itemsController;
 
-        private IItemsRepository _itemsRepository;
         private IItemsService _itemsService;
         private IItemLocationHelper _itemLocationHelper;
 
         [SetUp]
         public void SetUp()
         {
-            _itemsRepository = Substitute.For<IItemsRepository>();
             _itemsService = Substitute.For<IItemsService>();
             _itemLocationHelper = Substitute.For<IItemLocationHelper>();
 
-            _itemsController = new ItemsController(_itemsRepository, _itemsService, _itemLocationHelper)
+            _itemsController = new ItemsController(_itemsService, _itemLocationHelper)
             {
                 Request = new HttpRequestMessage(),
                 Configuration = new HttpConfiguration(),
@@ -51,7 +48,7 @@ namespace ItemsListApp.Api.UnitTests.Tests.Controllers
                 Id = itemId,
                 Text = "InvalidateText of required item",
             };
-            _itemsRepository.GetByIdAsync(itemId).Returns(expected);
+            _itemsService.GetByIdAsync(itemId).Returns(expected);
 
             var action = await _itemsController.GetAsync(expected.Id);
             var response = await action.ExecuteAsync(CancellationToken.None);
@@ -63,6 +60,35 @@ namespace ItemsListApp.Api.UnitTests.Tests.Controllers
         }
 
         [Test]
+        public async Task Get_NonExistentId_ReturnsNull()
+        {
+            var itemId = new Guid("6341EB90-93E6-49AA-BBEC-2A69C3C8DB8D");
+            _itemsService.GetByIdAsync(itemId).Returns((Item) null);
+
+            var action = await _itemsController.GetAsync(itemId);
+            var response = await action.ExecuteAsync(CancellationToken.None);
+            Item actual;
+            response.TryGetContentValue(out actual);
+
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NoContent));
+            Assert.That(actual, Is.Null);
+        }
+
+        [Test]
+        public async Task Get_InvalidId_ReturnsBadRequest()
+        {
+            var invalidId = Guid.Empty;
+
+            var action = await _itemsController.GetAsync(invalidId);
+            var response = await action.ExecuteAsync(CancellationToken.None);
+            HttpError actual;
+            response.TryGetContentValue(out actual);
+
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+            Assert.That(actual.Keys.Count, Is.GreaterThan(0));
+        }
+
+        [Test]
         public async Task Get_NoParameters_ReturnsAllItems()
         {
             var expected = new[]
@@ -71,7 +97,7 @@ namespace ItemsListApp.Api.UnitTests.Tests.Controllers
                 new Item {Id = new Guid("F5CFB0AF-EB26-478B-AF41-7DA314458706"), Text = "Dummy text 2"},
                 new Item {Id = new Guid("A77EE2AF-B6A2-456B-8683-A34B37B6E70F"), Text = "Dummy text 3"},
             };
-            _itemsRepository.GetAllAsync().Returns(expected);
+            _itemsService.GetAllAsync().Returns(expected);
 
 
             var action = await _itemsController.GetAsync();
@@ -122,7 +148,7 @@ namespace ItemsListApp.Api.UnitTests.Tests.Controllers
         }
 
         [Test]
-        public async Task Put_ItemWithId_ReturnsSameItem()
+        public async Task Put_ItemWithId_ReturnsSuccessCodeRequest()
         {
             var expected = new Item
             {
@@ -132,11 +158,36 @@ namespace ItemsListApp.Api.UnitTests.Tests.Controllers
 
             var action = await _itemsController.PutAsync(expected);
             var response = await action.ExecuteAsync(CancellationToken.None);
-            Item actual;
-            response.TryGetContentValue(out actual);
 
             Assert.That(response.IsSuccessStatusCode);
-            Assert.That(actual, Is.EqualTo(expected).UsingItemComparer());
+        }
+
+        [Test]
+        public async Task Put_ItemWithNonExistingId_ReturnsNoContent()
+        {
+            var expected = new Item
+            {
+                Id = new Guid("999EA6F0-4139-4D54-B4DD-4976A35D1DFA"),
+                Text = "InvalidateText of required item",
+            };
+            _itemsService.PutAsync(expected).Returns((Item) null);
+
+            var action = await _itemsController.PutAsync(expected);
+            var response = await action.ExecuteAsync(CancellationToken.None);
+
+            Assert.That(response.StatusCode,Is.EqualTo(HttpStatusCode.NoContent));
+        }
+
+        [Test, TestCaseSource(typeof(InvalidPutTestCases))]
+        public async Task Put_InvalidItem_ReturnsBadRequest(Item postItem, IEnumerable<string> modelStateErrorKeys)
+        {
+            var action = await _itemsController.PutAsync(postItem);
+            var response = await action.ExecuteAsync(CancellationToken.None);
+            HttpError actual;
+            response.TryGetContentValue(out actual);
+
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+            Assert.That(actual.ModelState.Keys, Is.EquivalentTo(modelStateErrorKeys).IgnoreCase);
         }
 
         [Test]
@@ -154,28 +205,63 @@ namespace ItemsListApp.Api.UnitTests.Tests.Controllers
         {
             public IEnumerator<TestCaseData> GetEnumerator()
             {
-                yield return new ItemTestCaseBuilder()
+                yield return new ItemPostTestCaseBuilder()
                     .InvalidateId(new Guid("999EA6F0-4139-4D54-B4DD-4976A35D1DFA"))
                     .Build();
 
-                yield return new ItemTestCaseBuilder()
+                yield return new ItemPostTestCaseBuilder()
                     .InvalidateText(string.Empty)
                     .Build();
 
-                yield return new ItemTestCaseBuilder()
+                yield return new ItemPostTestCaseBuilder()
                     .InvalidateText("   ")
                     .Build();
 
-                yield return new ItemTestCaseBuilder()
+                yield return new ItemPostTestCaseBuilder()
                     .InvalidateText(null)
                     .Build();
 
-                yield return new ItemTestCaseBuilder()
+                yield return new ItemPostTestCaseBuilder()
                     .InvalidateId(new Guid("999EA6F0-4139-4D54-B4DD-4976A35D1DFA"))
                     .InvalidateText(string.Empty)
                     .Build();
 
-                yield return new ItemTestCaseBuilder()
+                yield return new ItemPostTestCaseBuilder()
+                    .InvalidItem();
+            }
+
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                return GetEnumerator();
+            }
+        }
+
+        private class InvalidPutTestCases : IEnumerable<TestCaseData>
+        {
+            public IEnumerator<TestCaseData> GetEnumerator()
+            {
+                yield return new ItemPutTestCaseBuilder()
+                    .InvalidateId(Guid.Empty)
+                    .Build();
+
+                yield return new ItemPutTestCaseBuilder()
+                    .InvalidateText(string.Empty)
+                    .Build();
+
+                yield return new ItemPutTestCaseBuilder()
+                    .InvalidateText("   ")
+                    .Build();
+
+                yield return new ItemPutTestCaseBuilder()
+                    .InvalidateText(null)
+                    .Build();
+
+                yield return new ItemPutTestCaseBuilder()
+                    .InvalidateId(Guid.Empty)
+                    .InvalidateText(string.Empty)
+                    .Build();
+
+                yield return new ItemPutTestCaseBuilder()
                     .InvalidItem();
             }
 

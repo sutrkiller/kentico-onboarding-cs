@@ -13,7 +13,7 @@ namespace ItemsListApp.Contracts.Services
 
         Task<IEnumerable<Item>> GetAllAsync();
 
-        Task PutAsync(Item item);
+        Task<Item> PutAsync(Item item);
 
         Task<Item> RemoveByIdAsync(Guid id);
     }

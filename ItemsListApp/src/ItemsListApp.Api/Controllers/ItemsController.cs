@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using ItemsListApp.Contracts.Api;
 using ItemsListApp.Contracts.Models;
-using ItemsListApp.Contracts.Repository;
 using ItemsListApp.Contracts.Services;
 
 namespace ItemsListApp.Api.Controllers
@@ -12,13 +11,11 @@ namespace ItemsListApp.Api.Controllers
     //api/v1/items
     public class ItemsController : ApiController
     {
-        private readonly IItemsRepository _itemsesRepository;
         private readonly IItemsService _itemsService;
         private readonly IItemLocationHelper _itemLocationHelper;
 
-        public ItemsController(IItemsRepository itemsesRepository, IItemsService itemsService, IItemLocationHelper itemLocationHelper)
+        public ItemsController(IItemsService itemsService, IItemLocationHelper itemLocationHelper)
         {
-            _itemsesRepository = itemsesRepository;
             _itemsService = itemsService;
             _itemLocationHelper = itemLocationHelper;
         }
@@ -26,7 +23,8 @@ namespace ItemsListApp.Api.Controllers
         // GET api/items
         public async Task<IHttpActionResult> GetAsync()
         {
-            var allItems = await _itemsesRepository.GetAllAsync();
+            //var allItems = await _itemsesRepository.GetAllAsync();
+            var allItems = await _itemsService.GetAllAsync();
 
             return Ok(allItems);
         }
@@ -34,7 +32,18 @@ namespace ItemsListApp.Api.Controllers
         // GET api/v1/items/5
         public async Task<IHttpActionResult> GetAsync(Guid id)
         {
-            var item = await _itemsesRepository.GetByIdAsync(id);
+            ValidateGetId(id);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var item = await _itemsService.GetByIdAsync(id);
+
+            if (item == null)
+            {
+                return StatusCode(HttpStatusCode.NoContent);
+            }
 
             return Ok(item);
         }
@@ -54,6 +63,32 @@ namespace ItemsListApp.Api.Controllers
             return Created(location, newItem);
         }
 
+        // PUT api/v1/items/5
+        public async Task<IHttpActionResult> PutAsync([FromBody] Item item)
+        {
+            ValidatePutItem(item);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var editedItem = await _itemsService.PutAsync(item);
+            if (editedItem == null)
+            {
+                return StatusCode(HttpStatusCode.NoContent);
+            }
+
+            return Ok(editedItem);
+        }
+
+        // DELETE api/v1/items/5
+        public async Task<IHttpActionResult> DeleteAsync(Guid id)
+        {
+            await _itemsService.RemoveByIdAsync(id);
+
+            return StatusCode(HttpStatusCode.NoContent);
+        }
+
         private void ValidatePostedItem(Item item)
         {
             if (item == null)
@@ -71,20 +106,33 @@ namespace ItemsListApp.Api.Controllers
             }
         }
 
-        // PUT api/v1/items/5
-        public async Task<IHttpActionResult> PutAsync([FromBody] Item item)
+        private void ValidateGetId(Guid id)
         {
-            await _itemsesRepository.UpdateAsync(item);
-
-            return Ok(item);
+            if (!ModelState.IsValid)
+            {
+                return;
+            }
+            if (id == default(Guid))
+            {
+                ModelState.AddModelError(nameof(id), "Id is not valid");
+            }
         }
 
-        // DELETE api/v1/items/5
-        public async Task<IHttpActionResult> DeleteAsync(Guid id)
+        private void ValidatePutItem(Item item)
         {
-            await _itemsesRepository.RemoveByIdAsync(id);
-
-            return StatusCode(HttpStatusCode.NoContent);
+            if (item == null)
+            {
+                ModelState.AddModelError(nameof(item), "Body format is not correct");
+                return;
+            }
+            if (item.Id == default(Guid))
+            {
+                ModelState.AddModelError(nameof(item.Id), "Item must contain identifier");
+            }
+            if (string.IsNullOrWhiteSpace(item.Text))
+            {
+                ModelState.AddModelError(nameof(item.Text), "Item text is not valid");
+            }
         }
     }
 }

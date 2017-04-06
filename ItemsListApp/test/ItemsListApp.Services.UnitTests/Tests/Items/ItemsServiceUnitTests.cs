@@ -6,7 +6,6 @@ using ItemsListApp.Contracts.Services;
 using ItemsListApp.Contracts.UnitTests.Base.Helpers;
 using ItemsListApp.Services.Items;
 using NSubstitute;
-using NSubstitute.ExceptionExtensions;
 using NUnit.Framework;
 
 namespace ItemsListApp.Services.UnitTests.Tests.Items
@@ -93,6 +92,62 @@ namespace ItemsListApp.Services.UnitTests.Tests.Items
             var items = await _itemsService.GetAllAsync();
 
             Assert.That(items, Is.EqualTo(expected).AsCollection.UsingItemComparer());
+        }
+
+        [Test]
+        public async Task PutAsync_ValidItem_ReturnsSameItem()
+        {
+            var expected = new Item
+            {
+                Id = new Guid("95AB19B6-455B-469C-83AA-CD505E9389BD"),
+                Text = "cool text",
+            };
+            _itemsRepository.UpdateAsync(expected).Returns(expected);
+
+            var item = await _itemsService.PutAsync(expected);
+
+            Assert.That(item, Is.EqualTo(expected).UsingItemComparer());
+        }
+
+        [Test]
+        public async Task PutAsync_InvalidItem_ReturnsNull()
+        {
+            var expected = new Item
+            {
+                Id = new Guid("95AB19B6-455B-469C-83AA-CD505E9389BD"),
+                Text = "cool text",
+            };
+            _itemsRepository.UpdateAsync(expected).Returns((Item) null);
+
+            var item = await _itemsService.PutAsync(expected);
+
+            Assert.That(item, Is.Null);
+        }
+
+        [Test]
+        public async Task RemoveByIdAsync_ValidId_ReturnsItemWithThisId()
+        {
+            var expected = new Item
+            {
+                Id = new Guid("95AB19B6-455B-469C-83AA-CD505E9389BD"),
+                Text = "cool text",
+            };
+            _itemsRepository.RemoveByIdAsync(expected.Id).Returns(expected);
+
+            var item = await _itemsService.RemoveByIdAsync(expected.Id);
+
+            Assert.That(item, Is.EqualTo(expected).UsingItemComparer());
+        }
+
+        [Test]
+        public async Task RemoveByIdAsync_InvalidId_ReturnsNull()
+        {
+            var id = new Guid("95AB19B6-455B-469C-83AA-CD505E9389BD");
+            _itemsRepository.RemoveByIdAsync(id).Returns(null as Item);
+
+            var item = await _itemsService.RemoveByIdAsync(id);
+
+            Assert.That(item, Is.Null);
         }
     }
 }

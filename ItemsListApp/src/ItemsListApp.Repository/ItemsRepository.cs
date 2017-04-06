@@ -32,9 +32,10 @@ namespace ItemsListApp.Repository
             => (await _dbCollection.FindAsync(FilterDefinition<Item>.Empty))
                 .ToEnumerable();
 
-        public async Task UpdateAsync(Item item)
+        public async Task<Item> UpdateAsync(Item item)
         {
-            await _dbCollection.ReplaceOneAsync(value => value.Id == item.Id, item);
+            var original = await _dbCollection.FindOneAndReplaceAsync(value => value.Id == item.Id, item);
+            return original == null ? null : item;
         }
 
         public async Task<Item> RemoveByIdAsync(Guid id)
