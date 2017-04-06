@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using ItemsListApp.Contracts.Models;
 using ItemsListApp.Contracts.Repository;
 using ItemsListApp.Contracts.Services;

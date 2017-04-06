@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Linq;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using ItemsListApp.Contracts.Models;
 
@@ -11,7 +11,7 @@ namespace ItemsListApp.Contracts.Repository
 
         Task<Item> GetByIdAsync(Guid id);
 
-        Task<IQueryable<Item>> GetAllAsync();
+        Task<IEnumerable<Item>> GetAllAsync();
 
         Task UpdateAsync(Item item);
 

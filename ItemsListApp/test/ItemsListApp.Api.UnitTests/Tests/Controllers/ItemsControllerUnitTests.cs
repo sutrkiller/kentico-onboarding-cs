@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
@@ -50,7 +49,7 @@ namespace ItemsListApp.Api.UnitTests.Tests.Controllers
             var expected = new Item
             {
                 Id = itemId,
-                Text = "Text of required item",
+                Text = "InvalidateText of required item",
             };
             _itemsRepository.GetByIdAsync(itemId).Returns(expected);
 
@@ -72,7 +71,7 @@ namespace ItemsListApp.Api.UnitTests.Tests.Controllers
                 new Item {Id = new Guid("F5CFB0AF-EB26-478B-AF41-7DA314458706"), Text = "Dummy text 2"},
                 new Item {Id = new Guid("A77EE2AF-B6A2-456B-8683-A34B37B6E70F"), Text = "Dummy text 3"},
             };
-            _itemsRepository.GetAllAsync().Returns(expected.AsQueryable());
+            _itemsRepository.GetAllAsync().Returns(expected);
 
 
             var action = await _itemsController.GetAsync();
@@ -128,7 +127,7 @@ namespace ItemsListApp.Api.UnitTests.Tests.Controllers
             var expected = new Item
             {
                 Id = new Guid("999EA6F0-4139-4D54-B4DD-4976A35D1DFA"),
-                Text = "Text of required item",
+                Text = "InvalidateText of required item",
             };
 
             var action = await _itemsController.PutAsync(expected);
@@ -156,35 +155,28 @@ namespace ItemsListApp.Api.UnitTests.Tests.Controllers
             public IEnumerator<TestCaseData> GetEnumerator()
             {
                 yield return new ItemTestCaseBuilder()
-                    .Id(new Guid("999EA6F0-4139-4D54-B4DD-4976A35D1DFA"))
-                    .Text("Something extremely creative")
-                    .InvalidParts(nameof(Item.Id))
+                    .InvalidateId(new Guid("999EA6F0-4139-4D54-B4DD-4976A35D1DFA"))
                     .Build();
 
                 yield return new ItemTestCaseBuilder()
-                    .Text(string.Empty)
-                    .InvalidParts(nameof(Item.Text))
+                    .InvalidateText(string.Empty)
                     .Build();
 
                 yield return new ItemTestCaseBuilder()
-                    .Text("   ")
-                    .InvalidParts(nameof(Item.Text))
+                    .InvalidateText("   ")
                     .Build();
 
                 yield return new ItemTestCaseBuilder()
-                    .Text(null)
-                    .InvalidParts(nameof(Item.Text))
+                    .InvalidateText(null)
                     .Build();
 
                 yield return new ItemTestCaseBuilder()
-                    .Id(new Guid("999EA6F0-4139-4D54-B4DD-4976A35D1DFA"))
-                    .Text(string.Empty)
-                    .InvalidParts(nameof(Item.Id), nameof(Item.Text))
+                    .InvalidateId(new Guid("999EA6F0-4139-4D54-B4DD-4976A35D1DFA"))
+                    .InvalidateText(string.Empty)
                     .Build();
 
                 yield return new ItemTestCaseBuilder()
-                    .InvalidParts(nameof(Item))
-                    .Build();
+                    .InvalidItem();
             }
 
             IEnumerator IEnumerable.GetEnumerator()
