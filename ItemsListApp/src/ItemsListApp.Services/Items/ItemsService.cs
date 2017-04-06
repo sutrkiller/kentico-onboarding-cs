@@ -11,15 +11,17 @@ namespace ItemsListApp.Services.Items
     {
         private readonly IItemsRepository _itemsRepository;
         private readonly IIdGeneratorService _idGeneratorService;
+        private readonly IDateTimeService _dateTimeService;
 
-        public ItemsService(IItemsRepository itemsRepository, IIdGeneratorService idGeneratorService)
+        public ItemsService(IItemsRepository itemsRepository, IIdGeneratorService idGeneratorService, IDateTimeService dateTimeService)
         {
             _itemsRepository = itemsRepository;
             _idGeneratorService = idGeneratorService;
+            _dateTimeService = dateTimeService;
         }
         public async Task<Item> AddItemAsync(Item item)
         {
-            var creationTime = DateTime.Now;
+            var creationTime = await _dateTimeService.GetCurrentDateAsync();
             var newItem = new Item
             {
                 Id = await _idGeneratorService.GenerateIdAsync(), 
@@ -44,7 +46,7 @@ namespace ItemsListApp.Services.Items
             if (original == null) return null;
 
             original.Text = item.Text;
-            original.LastUpdateTime = DateTime.Now;
+            original.LastUpdateTime = await _dateTimeService.GetCurrentDateAsync();
 
             await _itemsRepository.UpdateAsync(original);
 

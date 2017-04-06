@@ -56,6 +56,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Time\DateTimeService.cs" />
     <Compile Include="DependencyRegister.cs" />
     <Compile Include="Identity\IdGeneratorService.cs" />
     <Compile Include="Items\ItemsService.cs" />

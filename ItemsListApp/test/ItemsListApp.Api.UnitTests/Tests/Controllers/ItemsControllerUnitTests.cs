@@ -70,7 +70,7 @@ namespace ItemsListApp.Api.UnitTests.Tests.Controllers
             Item actual;
             response.TryGetContentValue(out actual);
 
-            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NoContent));
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
             Assert.That(actual, Is.Null);
         }
 
@@ -155,11 +155,15 @@ namespace ItemsListApp.Api.UnitTests.Tests.Controllers
                 Id = new Guid("999EA6F0-4139-4D54-B4DD-4976A35D1DFA"),
                 Text = "InvalidateText of required item",
             };
+            _itemsService.PutAsync(expected).Returns(expected);
 
             var action = await _itemsController.PutAsync(expected);
             var response = await action.ExecuteAsync(CancellationToken.None);
+            Item actual;
+            response.TryGetContentValue(out actual);
 
-            Assert.That(response.IsSuccessStatusCode);
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(actual, Is.EqualTo(expected).UsingItemComparer());
         }
 
         [Test]
@@ -175,7 +179,7 @@ namespace ItemsListApp.Api.UnitTests.Tests.Controllers
             var action = await _itemsController.PutAsync(expected);
             var response = await action.ExecuteAsync(CancellationToken.None);
 
-            Assert.That(response.StatusCode,Is.EqualTo(HttpStatusCode.NoContent));
+            Assert.That(response.StatusCode,Is.EqualTo(HttpStatusCode.NotFound));
         }
 
         [Test, TestCaseSource(typeof(InvalidPutTestCases))]
@@ -222,8 +226,22 @@ namespace ItemsListApp.Api.UnitTests.Tests.Controllers
                     .Build();
 
                 yield return new ItemPostTestCaseBuilder()
+                    .InvalidateCreationTime(
+                        new DateTime(year: 2017, month: 4, day: 6, hour: 12, minute: 12, second: 50))
+                    .Build();
+
+                yield return new ItemPostTestCaseBuilder()
+                    .InvalidateLastUpdateTime(
+                        new DateTime(year: 2017, month: 4, day: 6, hour: 12, minute: 12, second: 50))
+                    .Build();
+
+                yield return new ItemPostTestCaseBuilder()
                     .InvalidateId(new Guid("999EA6F0-4139-4D54-B4DD-4976A35D1DFA"))
                     .InvalidateText(string.Empty)
+                    .InvalidateCreationTime(
+                        new DateTime(year: 2017, month: 2, day: 4, hour: 2, minute: 8, second: 17))
+                    .InvalidateLastUpdateTime(
+                        new DateTime(year: 2017, month: 4, day: 6, hour: 12, minute: 12, second: 50))
                     .Build();
 
                 yield return new ItemPostTestCaseBuilder()
@@ -257,8 +275,22 @@ namespace ItemsListApp.Api.UnitTests.Tests.Controllers
                     .Build();
 
                 yield return new ItemPutTestCaseBuilder()
+                    .InvalidateCreationTime(
+                        new DateTime(year: 2017, month: 4, day: 6, hour: 12, minute: 12, second: 50))
+                    .Build();
+
+                yield return new ItemPutTestCaseBuilder()
+                    .InvalidateLastUpdateTime(
+                        new DateTime(year: 2017, month: 4, day: 6, hour: 12, minute: 12, second: 50))
+                    .Build();
+
+                yield return new ItemPutTestCaseBuilder()
                     .InvalidateId(Guid.Empty)
                     .InvalidateText(string.Empty)
+                    .InvalidateCreationTime(
+                        new DateTime(year: 2017, month: 2, day: 4, hour: 2, minute: 8, second: 17))
+                    .InvalidateLastUpdateTime(
+                        new DateTime(year: 2017, month: 4, day: 6, hour: 12, minute: 12, second: 50))
                     .Build();
 
                 yield return new ItemPutTestCaseBuilder()

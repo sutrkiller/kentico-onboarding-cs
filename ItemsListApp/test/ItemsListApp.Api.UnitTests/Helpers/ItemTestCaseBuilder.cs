@@ -34,6 +34,20 @@ namespace ItemsListApp.Api.UnitTests.Helpers
             return this;
         }
 
+        public ItemTestCaseBuilder InvalidateCreationTime(DateTime time)
+        {
+            Item.CreationTime = time;
+            _invalidParts.Add(nameof(Item.CreationTime));
+            return this;
+        }
+
+        public ItemTestCaseBuilder InvalidateLastUpdateTime(DateTime time)
+        {
+            Item.LastUpdateTime = time;
+            _invalidParts.Add(nameof(Item.LastUpdateTime));
+            return this;
+        }
+
         public TestCaseData Build() 
             => new TestCaseData(Item, _invalidParts);
 

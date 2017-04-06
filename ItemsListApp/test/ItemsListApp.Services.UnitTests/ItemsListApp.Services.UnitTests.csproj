@@ -61,6 +61,7 @@
     <Compile Include="Tests\Identity\IdGeneratorServiceUnitTests.cs" />
     <Compile Include="Tests\Items\ItemsServiceUnitTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Time\DateTimeServiceUnitTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

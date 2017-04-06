@@ -42,7 +42,7 @@ namespace ItemsListApp.Api.Controllers
 
             if (item == null)
             {
-                return StatusCode(HttpStatusCode.NoContent);
+                return NotFound();
             }
 
             return Ok(item);
@@ -75,7 +75,7 @@ namespace ItemsListApp.Api.Controllers
             var editedItem = await _itemsService.PutAsync(item);
             if (editedItem == null)
             {
-                return StatusCode(HttpStatusCode.NoContent);
+                return NotFound();
             }
 
             return Ok(editedItem);
@@ -103,6 +103,14 @@ namespace ItemsListApp.Api.Controllers
             if (string.IsNullOrWhiteSpace(item.Text))
             {
                 ModelState.AddModelError(nameof(item.Text), "Item text is not valid");
+            }
+            if (item.CreationTime != default(DateTime))
+            {
+                ModelState.AddModelError(nameof(Item.CreationTime), "Item can't be posted with set creation time");
+            }
+            if (item.LastUpdateTime != default(DateTime))
+            {
+                ModelState.AddModelError(nameof(Item.LastUpdateTime), "Item can't be posted with set last updated time");
             }
         }
 
@@ -132,6 +140,14 @@ namespace ItemsListApp.Api.Controllers
             if (string.IsNullOrWhiteSpace(item.Text))
             {
                 ModelState.AddModelError(nameof(item.Text), "Item text is not valid");
+            }
+            if (item.CreationTime != default(DateTime))
+            {
+                ModelState.AddModelError(nameof(Item.CreationTime), "Creation time cannot be set through API");
+            }
+            if (item.LastUpdateTime != default(DateTime))
+            {
+                ModelState.AddModelError(nameof(Item.LastUpdateTime), "Update time cannot be updated through API");
             }
         }
     }

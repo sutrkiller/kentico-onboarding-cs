@@ -9,7 +9,7 @@ namespace ItemsListApp.Api.UnitTests.Helpers
             => new Item
             {
                 Id = new Guid("479867AA-1761-43D6-A2DD-0DCF07142D89"),
-                Text = "Something realllly creative"
+                Text = "Something realllly creative",
             };
     }
 }
