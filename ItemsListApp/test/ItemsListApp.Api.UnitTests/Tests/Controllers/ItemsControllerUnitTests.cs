@@ -10,6 +10,7 @@ using ItemsListApp.Api.Controllers;
 using ItemsListApp.Api.UnitTests.Helpers;
 using ItemsListApp.Contracts.Api;
 using ItemsListApp.Contracts.Models;
+using ItemsListApp.Contracts.Repository;
 using ItemsListApp.Contracts.Services;
 using ItemsListApp.Contracts.UnitTests.Base.Helpers;
 using NSubstitute;
@@ -25,14 +26,16 @@ namespace ItemsListApp.Api.UnitTests.Tests.Controllers
 
         private IItemsService _itemsService;
         private IItemLocationHelper _itemLocationHelper;
+        private IItemsRepository _itemsRepository;
 
         [SetUp]
         public void SetUp()
         {
             _itemsService = Substitute.For<IItemsService>();
             _itemLocationHelper = Substitute.For<IItemLocationHelper>();
+            _itemsRepository = Substitute.For<IItemsRepository>();
 
-            _itemsController = new ItemsController(_itemsService, _itemLocationHelper)
+            _itemsController = new ItemsController(_itemsService, _itemsRepository, _itemLocationHelper)
             {
                 Request = new HttpRequestMessage(),
                 Configuration = new HttpConfiguration(),
@@ -48,7 +51,7 @@ namespace ItemsListApp.Api.UnitTests.Tests.Controllers
                 Id = itemId,
                 Text = "InvalidateText of required item",
             };
-            _itemsService.GetByIdAsync(itemId).Returns(expected);
+            _itemsRepository.GetByIdAsync(itemId).Returns(expected);
 
             var action = await _itemsController.GetAsync(expected.Id);
             var response = await action.ExecuteAsync(CancellationToken.None);
@@ -63,7 +66,7 @@ namespace ItemsListApp.Api.UnitTests.Tests.Controllers
         public async Task Get_NonExistentId_ReturnsNull()
         {
             var itemId = new Guid("6341EB90-93E6-49AA-BBEC-2A69C3C8DB8D");
-            _itemsService.GetByIdAsync(itemId).Returns((Item) null);
+            _itemsRepository.GetByIdAsync(itemId).Returns((Item) null);
 
             var action = await _itemsController.GetAsync(itemId);
             var response = await action.ExecuteAsync(CancellationToken.None);
@@ -97,7 +100,7 @@ namespace ItemsListApp.Api.UnitTests.Tests.Controllers
                 new Item {Id = new Guid("F5CFB0AF-EB26-478B-AF41-7DA314458706"), Text = "Dummy text 2"},
                 new Item {Id = new Guid("A77EE2AF-B6A2-456B-8683-A34B37B6E70F"), Text = "Dummy text 3"},
             };
-            _itemsService.GetAllAsync().Returns(expected);
+            _itemsRepository.GetAllAsync().Returns(expected);
 
 
             var action = await _itemsController.GetAsync();
@@ -123,7 +126,7 @@ namespace ItemsListApp.Api.UnitTests.Tests.Controllers
                 Text = postItem.Text,
             };
             _itemLocationHelper.CreateLocation(itemId).Returns($"dummy location/{itemId}");
-            _itemsService.AddItemAsync(postItem).Returns(expected);
+            _itemsService.CreateNewAsync(postItem).Returns(expected);
 
             var action = await _itemsController.PostAsync(postItem);
             var response = await action.ExecuteAsync(CancellationToken.None);
@@ -155,7 +158,7 @@ namespace ItemsListApp.Api.UnitTests.Tests.Controllers
                 Id = new Guid("999EA6F0-4139-4D54-B4DD-4976A35D1DFA"),
                 Text = "InvalidateText of required item",
             };
-            _itemsService.PutAsync(expected).Returns(expected);
+            _itemsService.ReplaceExistingAsync(expected).Returns(expected);
 
             var action = await _itemsController.PutAsync(expected);
             var response = await action.ExecuteAsync(CancellationToken.None);
@@ -174,7 +177,7 @@ namespace ItemsListApp.Api.UnitTests.Tests.Controllers
                 Id = new Guid("999EA6F0-4139-4D54-B4DD-4976A35D1DFA"),
                 Text = "InvalidateText of required item",
             };
-            _itemsService.PutAsync(expected).Returns((Item) null);
+            _itemsService.ReplaceExistingAsync(expected).Returns((Item) null);
 
             var action = await _itemsController.PutAsync(expected);
             var response = await action.ExecuteAsync(CancellationToken.None);

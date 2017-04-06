@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using ItemsListApp.Contracts.Api;
 using ItemsListApp.Contracts.Models;
+using ItemsListApp.Contracts.Repository;
 using ItemsListApp.Contracts.Services;
 
 namespace ItemsListApp.Api.Controllers
@@ -12,11 +13,13 @@ namespace ItemsListApp.Api.Controllers
     public class ItemsController : ApiController
     {
         private readonly IItemsService _itemsService;
+        private readonly IItemsRepository _itemsRepository;
         private readonly IItemLocationHelper _itemLocationHelper;
 
-        public ItemsController(IItemsService itemsService, IItemLocationHelper itemLocationHelper)
+        public ItemsController(IItemsService itemsService, IItemsRepository itemsRepository, IItemLocationHelper itemLocationHelper)
         {
             _itemsService = itemsService;
+            _itemsRepository = itemsRepository;
             _itemLocationHelper = itemLocationHelper;
         }
 
@@ -24,7 +27,7 @@ namespace ItemsListApp.Api.Controllers
         public async Task<IHttpActionResult> GetAsync()
         {
             //var allItems = await _itemsesRepository.GetAllAsync();
-            var allItems = await _itemsService.GetAllAsync();
+            var allItems = await _itemsRepository.GetAllAsync();
 
             return Ok(allItems);
         }
@@ -38,7 +41,7 @@ namespace ItemsListApp.Api.Controllers
                 return BadRequest(ModelState);
             }
 
-            var item = await _itemsService.GetByIdAsync(id);
+            var item = await _itemsRepository.GetByIdAsync(id);
 
             if (item == null)
             {
@@ -57,7 +60,7 @@ namespace ItemsListApp.Api.Controllers
                 return BadRequest(ModelState);
             }
 
-            var newItem = await _itemsService.AddItemAsync(item);
+            var newItem = await _itemsService.CreateNewAsync(item);
             var location = _itemLocationHelper.CreateLocation(newItem.Id);
 
             return Created(location, newItem);
@@ -72,7 +75,7 @@ namespace ItemsListApp.Api.Controllers
                 return BadRequest(ModelState);
             }
 
-            var editedItem = await _itemsService.PutAsync(item);
+            var editedItem = await _itemsService.ReplaceExistingAsync(item);
             if (editedItem == null)
             {
                 return NotFound();
@@ -84,7 +87,7 @@ namespace ItemsListApp.Api.Controllers
         // DELETE api/v1/items/5
         public async Task<IHttpActionResult> DeleteAsync(Guid id)
         {
-            await _itemsService.RemoveByIdAsync(id);
+            await _itemsRepository.RemoveByIdAsync(id);
 
             return StatusCode(HttpStatusCode.NoContent);
         }
@@ -100,18 +103,7 @@ namespace ItemsListApp.Api.Controllers
             {
                 ModelState.AddModelError(nameof(item.Id), "Item must not contain identifier");
             }
-            if (string.IsNullOrWhiteSpace(item.Text))
-            {
-                ModelState.AddModelError(nameof(item.Text), "Item text is not valid");
-            }
-            if (item.CreationTime != default(DateTime))
-            {
-                ModelState.AddModelError(nameof(Item.CreationTime), "Item can't be posted with set creation time");
-            }
-            if (item.LastUpdateTime != default(DateTime))
-            {
-                ModelState.AddModelError(nameof(Item.LastUpdateTime), "Item can't be posted with set last updated time");
-            }
+            ValidateNonIdentifierProperties(item);
         }
 
         private void ValidateGetId(Guid id)
@@ -137,6 +129,11 @@ namespace ItemsListApp.Api.Controllers
             {
                 ModelState.AddModelError(nameof(item.Id), "Item must contain identifier");
             }
+            ValidateNonIdentifierProperties(item);
+        }
+
+        private void ValidateNonIdentifierProperties(Item item)
+        {
             if (string.IsNullOrWhiteSpace(item.Text))
             {
                 ModelState.AddModelError(nameof(item.Text), "Item text is not valid");
@@ -147,7 +144,7 @@ namespace ItemsListApp.Api.Controllers
             }
             if (item.LastUpdateTime != default(DateTime))
             {
-                ModelState.AddModelError(nameof(Item.LastUpdateTime), "Update time cannot be updated through API");
+                ModelState.AddModelError(nameof(Item.LastUpdateTime), "Update time cannot be set through API");
             }
         }
     }

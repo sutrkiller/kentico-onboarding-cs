@@ -7,14 +7,8 @@ namespace ItemsListApp.Contracts.Services
 {
     public interface IItemsService
     {
-        Task<Item> AddItemAsync(Item item);
+        Task<Item> CreateNewAsync(Item item);
 
-        Task<Item> GetByIdAsync(Guid id);
-
-        Task<IEnumerable<Item>> GetAllAsync();
-
-        Task<Item> PutAsync(Item item);
-
-        Task<Item> RemoveByIdAsync(Guid id);
+        Task<Item> ReplaceExistingAsync(Item item);
     }
 }

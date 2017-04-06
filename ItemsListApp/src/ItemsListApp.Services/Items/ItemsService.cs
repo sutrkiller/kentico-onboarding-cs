@@ -19,7 +19,7 @@ namespace ItemsListApp.Services.Items
             _idGeneratorService = idGeneratorService;
             _dateTimeService = dateTimeService;
         }
-        public async Task<Item> AddItemAsync(Item item)
+        public async Task<Item> CreateNewAsync(Item item)
         {
             var creationTime = await _dateTimeService.GetCurrentDateAsync();
             var newItem = new Item
@@ -34,13 +34,7 @@ namespace ItemsListApp.Services.Items
             return newItem;
         }
 
-        public async Task<Item> GetByIdAsync(Guid id)
-            => await _itemsRepository.GetByIdAsync(id);
-
-        public async Task<IEnumerable<Item>> GetAllAsync() 
-            => await _itemsRepository.GetAllAsync();
-
-        public async Task<Item> PutAsync(Item item)
+        public async Task<Item> ReplaceExistingAsync(Item item)
         {
             var original = await _itemsRepository.GetByIdAsync(item.Id);
             if (original == null) return null;
@@ -52,8 +46,5 @@ namespace ItemsListApp.Services.Items
 
             return original;
         }
-
-        public async Task<Item> RemoveByIdAsync(Guid id)
-            => await _itemsRepository.RemoveByIdAsync(id);
     }
 }
