@@ -54,6 +54,22 @@ namespace ItemsListApp.Api.Controllers
             return Created(location, newItem);
         }
 
+        // PUT api/v1/items/5
+        public async Task<IHttpActionResult> PutAsync([FromBody] Item item)
+        {
+            await _itemsesRepository.UpdateAsync(item);
+
+            return Ok(item);
+        }
+
+        // DELETE api/v1/items/5
+        public async Task<IHttpActionResult> DeleteAsync(Guid id)
+        {
+            await _itemsesRepository.RemoveByIdAsync(id);
+
+            return StatusCode(HttpStatusCode.NoContent);
+        }
+
         private void ValidatePostedItem(Item item)
         {
             if (item == null)
@@ -69,22 +85,6 @@ namespace ItemsListApp.Api.Controllers
             {
                 ModelState.AddModelError(nameof(item.Text), "Item text is not valid");
             }
-        }
-
-        // PUT api/v1/items/5
-        public async Task<IHttpActionResult> PutAsync([FromBody] Item item)
-        {
-            await _itemsesRepository.UpdateAsync(item);
-
-            return Ok(item);
-        }
-
-        // DELETE api/v1/items/5
-        public async Task<IHttpActionResult> DeleteAsync(Guid id)
-        {
-            await _itemsesRepository.RemoveByIdAsync(id);
-
-            return StatusCode(HttpStatusCode.NoContent);
         }
     }
 }

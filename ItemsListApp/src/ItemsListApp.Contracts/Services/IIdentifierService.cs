@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace ItemsListApp.Contracts.Services
 {
-    public interface IIdGeneratorService
+    public interface IIdentifierService
     {
         Task<Guid> GenerateIdAsync();
     }

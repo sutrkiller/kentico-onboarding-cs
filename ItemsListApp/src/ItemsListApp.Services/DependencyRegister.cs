@@ -11,7 +11,7 @@ namespace ItemsListApp.Services
         public void Register(IUnityContainer container)
         {
             container.RegisterType<IItemsService, ItemsService>(new ContainerControlledLifetimeManager());
-            container.RegisterType<IIdGeneratorService, IdGeneratorService>(new ContainerControlledLifetimeManager());
+            container.RegisterType<IIdentifierService, IdentifierService>(new ContainerControlledLifetimeManager());
         }
     }
 }

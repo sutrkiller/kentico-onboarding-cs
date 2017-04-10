@@ -15,14 +15,14 @@ namespace ItemsListApp.Services.UnitTests.Tests.Items
     {
         private ItemsService _itemsService;
         private IItemsRepository _itemsRepository;
-        private IIdGeneratorService _idGeneratorService;
+        private IIdentifierService _identifierService;
 
         [SetUp]
         public void SetUp()
         {
             _itemsRepository = Substitute.For<IItemsRepository>();
-            _idGeneratorService = Substitute.For<IIdGeneratorService>();
-            _itemsService = new ItemsService(_itemsRepository, _idGeneratorService);
+            _identifierService = Substitute.For<IIdentifierService>();
+            _itemsService = new ItemsService(_itemsRepository, _identifierService);
         }
 
         [Test]
@@ -36,7 +36,7 @@ namespace ItemsListApp.Services.UnitTests.Tests.Items
                 Text = text,
             };
             Item storedItem = null;
-            _idGeneratorService.GenerateIdAsync().Returns(id);
+            _identifierService.GenerateIdAsync().Returns(id);
             _itemsRepository.AddAsync(Arg.Do<Item>(item => { storedItem = item; })).Returns(Task.CompletedTask);
 
             var newItem = await _itemsService.AddItemAsync(expectedItem);

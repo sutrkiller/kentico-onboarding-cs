@@ -4,7 +4,7 @@ using ItemsListApp.Contracts.Services;
 
 namespace ItemsListApp.Services.Identity
 {
-    internal class IdGeneratorService : IIdGeneratorService
+    internal class IdentifierService : IIdentifierService
     {
         public Task<Guid> GenerateIdAsync() 
             => Task.FromResult(Guid.NewGuid());
