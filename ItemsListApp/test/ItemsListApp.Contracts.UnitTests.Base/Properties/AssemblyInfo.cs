@@ -4,11 +4,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("ItemsListApp.Api.UnitTests")]
+[assembly: AssemblyTitle("ItemsListApp.Contracts.UnitTests.Base")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Kentico software")]
-[assembly: AssemblyProduct("ItemsListApp.Api.UnitTests")]
+[assembly: AssemblyProduct("ItemsListApp.Contracts.UnitTests.Base")]
 [assembly: AssemblyCopyright("Copyright © Kentico software 2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -19,7 +19,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("24cac609-284e-41e3-8aeb-05783ec51767")]
+[assembly: Guid("9a218573-e912-4d5b-b988-335e9ccb9ff8")]
 
 // Version information for an assembly consists of the following four values:
 //

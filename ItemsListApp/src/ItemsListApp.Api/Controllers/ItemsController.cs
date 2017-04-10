@@ -1,20 +1,32 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
-using ItemsListApp.Api.Models;
+using ItemsListApp.Contracts.Api;
+using ItemsListApp.Contracts.Models;
+using ItemsListApp.Contracts.Repository;
+using ItemsListApp.Contracts.Services;
 
 namespace ItemsListApp.Api.Controllers
 {
-
     //api/v1/items
     public class ItemsController : ApiController
     {
+        private readonly IItemsRepository _itemsesRepository;
+        private readonly IItemsService _itemsService;
+        private readonly IItemLocationHelper _itemLocationHelper;
+
+        public ItemsController(IItemsRepository itemsesRepository, IItemsService itemsService, IItemLocationHelper itemLocationHelper)
+        {
+            _itemsesRepository = itemsesRepository;
+            _itemsService = itemsService;
+            _itemLocationHelper = itemLocationHelper;
+        }
+
         // GET api/items
         public async Task<IHttpActionResult> GetAsync()
         {
-            var allItems = await Task.FromResult(GetItems());
+            var allItems = await _itemsesRepository.GetAllAsync();
 
             return Ok(allItems);
         }
@@ -22,49 +34,57 @@ namespace ItemsListApp.Api.Controllers
         // GET api/v1/items/5
         public async Task<IHttpActionResult> GetAsync(Guid id)
         {
-            var item = await Task.FromResult(new Item
-            {
-                Id = id,
-                Text = "Text of required item",
-            });
+            var item = await _itemsesRepository.GetByIdAsync(id);
 
             return Ok(item);
         }
 
         // POST api/v1/items
-        public async Task<IHttpActionResult> PostAsync([FromBody]string text)
+        public async Task<IHttpActionResult> PostAsync([FromBody] Item item)
         {
-            var newItem = await Task.FromResult(new Item
+            ValidatePostedItem(item);
+            if (!ModelState.IsValid)
             {
-                Id = new Guid("97DDD880-D922-4A0D-BB07-E35339F4F5BE"),
-                Text = text
-            });
+                return BadRequest(ModelState);
+            }
 
-            var location = new Uri(Request.RequestUri, newItem.Id.ToString());
-            return Created( location, newItem);
+            var newItem = await _itemsService.AddItemAsync(item);
+            var location = _itemLocationHelper.CreateLocation(newItem.Id);
+
+            return Created(location, newItem);
         }
 
         // PUT api/v1/items/5
         public async Task<IHttpActionResult> PutAsync([FromBody] Item item)
         {
-            var editedItem = await Task.FromResult(item);
+            await _itemsesRepository.UpdateAsync(item);
 
-            return Ok(editedItem);
+            return Ok(item);
         }
 
         // DELETE api/v1/items/5
         public async Task<IHttpActionResult> DeleteAsync(Guid id)
         {
-            await Task.CompletedTask;
+            await _itemsesRepository.RemoveByIdAsync(id);
 
             return StatusCode(HttpStatusCode.NoContent);
         }
 
-        private static IEnumerable<Item> GetItems()
+        private void ValidatePostedItem(Item item)
         {
-            yield return new Item { Id = new Guid("A3672C82-AF6C-44AD-836E-D1C26A0A6359"), Text = "Dummy text 1" };
-            yield return new Item { Id = new Guid("F5CFB0AF-EB26-478B-AF41-7DA314458706"), Text = "Dummy text 2" };
-            yield return new Item { Id = new Guid("A77EE2AF-B6A2-456B-8683-A34B37B6E70F"), Text = "Dummy text 3" };
+            if (item == null)
+            {
+                ModelState.AddModelError(nameof(item), "Body format is not correct");
+                return;
+            }
+            if (item.Id != default(Guid))
+            {
+                ModelState.AddModelError(nameof(item.Id), "Item must not contain identifier");
+            }
+            if (string.IsNullOrWhiteSpace(item.Text))
+            {
+                ModelState.AddModelError(nameof(item.Text), "Item text is not valid");
+            }
         }
     }
 }
