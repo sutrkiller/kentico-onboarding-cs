@@ -58,7 +58,7 @@
   <ItemGroup>
     <Compile Include="Time\DateTimeService.cs" />
     <Compile Include="DependencyRegister.cs" />
-    <Compile Include="Identity\IdGeneratorService.cs" />
+    <Compile Include="Identity\IdentifierService.cs" />
     <Compile Include="Items\ItemsService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -6,20 +6,20 @@ using NUnit.Framework;
 namespace ItemsListApp.Services.UnitTests.Tests.Identity
 {
     [TestFixture]
-    public class IdGeneratorServiceUnitTests
+    public class IdentifierServiceUnitTests
     {
-        private IdGeneratorService _idGenerator;
+        private IdentifierService _identifier;
 
         [SetUp]
         public void SetUp()
         {
-            _idGenerator = new IdGeneratorService();
+            _identifier = new IdentifierService();
         }
 
         [Test]
         public async Task GenerateIdAsync_NotReturnEmptyGuid()
         {
-            var newId = await _idGenerator.GenerateIdAsync();
+            var newId = await _identifier.GenerateIdAsync();
 
             Assert.That(newId, Is.Not.EqualTo(Guid.Empty));
         }
@@ -27,8 +27,8 @@ namespace ItemsListApp.Services.UnitTests.Tests.Identity
         [Test]
         public async Task GenerateIdAsync_TwoConsequentCalls_ReturnUniqueIds()
         {
-            var newId = await _idGenerator.GenerateIdAsync();
-            var newId2 = await _idGenerator.GenerateIdAsync();
+            var newId = await _identifier.GenerateIdAsync();
+            var newId2 = await _identifier.GenerateIdAsync();
 
             Assert.That(newId, Is.Not.EqualTo(newId2));
         }

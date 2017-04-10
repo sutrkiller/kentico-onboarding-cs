@@ -15,16 +15,16 @@ namespace ItemsListApp.Services.UnitTests.Tests.Items
     {
         private ItemsService _itemsService;
         private IItemsRepository _itemsRepository;
-        private IIdGeneratorService _idGeneratorService;
         private IDateTimeService _dateTimeService;
+        private IIdentifierService _identifierService;
 
         [SetUp]
         public void SetUp()
         {
             _itemsRepository = Substitute.For<IItemsRepository>();
-            _idGeneratorService = Substitute.For<IIdGeneratorService>();
             _dateTimeService = Substitute.For<IDateTimeService>();
-            _itemsService = new ItemsService(_itemsRepository, _idGeneratorService, _dateTimeService);
+            _identifierService = Substitute.For<IIdentifierService>();
+            _itemsService = new ItemsService(_itemsRepository, _identifierService, _dateTimeService);
         }
 
         [Test]
@@ -43,8 +43,8 @@ namespace ItemsListApp.Services.UnitTests.Tests.Items
                 LastUpdateTime = creationTime,
             };
             Item storedItem = null;
+            _identifierService.GenerateIdAsync().Returns(expectedItem.Id);
             _itemsRepository.AddAsync(Arg.Do<Item>(item => { storedItem = item; })).Returns(Task.CompletedTask);
-            _idGeneratorService.GenerateIdAsync().Returns(expectedItem.Id);
             _dateTimeService.GetCurrentDateAsync().Returns(creationTime);
 
             var newItem = await _itemsService.CreateNewAsync(postItem);

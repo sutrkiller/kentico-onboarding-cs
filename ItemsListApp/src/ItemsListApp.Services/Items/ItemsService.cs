@@ -9,19 +9,19 @@ namespace ItemsListApp.Services.Items
     internal class ItemsService : IItemsService
     {
         private readonly IItemsRepository _itemsRepository;
-        private readonly IIdGeneratorService _idGeneratorService;
         private readonly IDateTimeService _dateTimeService;
+        private readonly IIdentifierService _identifierService;
 
-        public ItemsService(IItemsRepository itemsRepository, IIdGeneratorService idGeneratorService,
+        public ItemsService(IItemsRepository itemsRepository, IIdentifierService identifierService,
             IDateTimeService dateTimeService)
         {
             _itemsRepository = itemsRepository;
-            _idGeneratorService = idGeneratorService;
+            _identifierService = identifierService;
             _dateTimeService = dateTimeService;
         }
 
         public async Task<Item> CreateNewAsync(Item item)
-            => await CreateNewAsync(item, await _idGeneratorService.GenerateIdAsync());
+            => await CreateNewAsync(item, await _identifierService.GenerateIdAsync());
 
         public async Task<Item> ReplaceExistingAsync(Item item)
         {
