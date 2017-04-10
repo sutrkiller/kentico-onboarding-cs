@@ -2,6 +2,7 @@
 using ItemsListApp.Contracts.Services;
 using ItemsListApp.Services.Identity;
 using ItemsListApp.Services.Items;
+using ItemsListApp.Services.Time;
 using Microsoft.Practices.Unity;
 
 namespace ItemsListApp.Services
@@ -11,6 +12,7 @@ namespace ItemsListApp.Services
         public void Register(IUnityContainer container)
         {
             container.RegisterType<IItemsService, ItemsService>(new ContainerControlledLifetimeManager());
+            container.RegisterType<IDateTimeService, DateTimeService>(new ContainerControlledLifetimeManager());
             container.RegisterType<IIdentifierService, IdentifierService>(new ContainerControlledLifetimeManager());
         }
     }

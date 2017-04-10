@@ -20,7 +20,10 @@ namespace ItemsListApp.Contracts.UnitTests.Base.Helpers
                 if (ReferenceEquals(x, null)) return false;
                 if (ReferenceEquals(y, null)) return false;
                 if (x.GetType() != y.GetType()) return false;
-                return x.Id.Equals(y.Id) && string.Equals(x.Text, y.Text);
+                return x.Id.Equals(y.Id) 
+                    && string.Equals(x.Text, y.Text) 
+                    && DateTime.Equals(x.CreationTime, y.CreationTime) 
+                    && DateTime.Equals(x.LastUpdateTime, y.LastUpdateTime);
             }
 
             public int GetHashCode(Item obj)

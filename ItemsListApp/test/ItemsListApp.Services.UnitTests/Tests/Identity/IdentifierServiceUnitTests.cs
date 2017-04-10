@@ -5,8 +5,8 @@ using NUnit.Framework;
 
 namespace ItemsListApp.Services.UnitTests.Tests.Identity
 {
-    [TestFixture()]
-    public class IdGeneratorServiceUnitTests
+    [TestFixture]
+    public class IdentifierServiceUnitTests
     {
         private IdentifierService _identifier;
 
