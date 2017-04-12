@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using ItemsListApp.Contracts.Services;
 
-namespace ItemsListApp.Services.Identity
+namespace ItemsListApp.Services.StaticWrappers
 {
     internal class IdentifierService : IIdentifierService
     {

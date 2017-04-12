@@ -24,19 +24,14 @@ namespace ItemsListApp.Repository
             => await _dbCollection.InsertOneAsync(item);
 
         public async Task<Item> GetByIdAsync(Guid id)
-        {
-            var result = await _dbCollection.FindAsync(value => value.Id == id, new FindOptions<Item> {Limit = 1});
-            return await result.FirstOrDefaultAsync();
-        }
+            => await _dbCollection.Find(value => value.Id == id).FirstOrDefaultAsync();
 
         public async Task<IEnumerable<Item>> GetAllAsync()
             => (await _dbCollection.FindAsync(FilterDefinition<Item>.Empty))
                 .ToEnumerable();
 
         public async Task UpdateAsync(Item item)
-        {
-            await _dbCollection.ReplaceOneAsync(value => value.Id == item.Id, item);
-        }
+            => await _dbCollection.ReplaceOneAsync(value => value.Id == item.Id, item);
 
         public async Task<Item> RemoveByIdAsync(Guid id)
             => await _dbCollection.FindOneAndDeleteAsync(item => item.Id == id);

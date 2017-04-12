@@ -1,8 +1,7 @@
 ﻿using ItemsListApp.Contracts.DependecnyInjection;
 using ItemsListApp.Contracts.Services;
-using ItemsListApp.Services.Identity;
 using ItemsListApp.Services.Items;
-using ItemsListApp.Services.Time;
+using ItemsListApp.Services.StaticWrappers;
 using Microsoft.Practices.Unity;
 
 namespace ItemsListApp.Services

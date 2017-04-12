@@ -58,10 +58,10 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="Tests\Identity\IdentifierServiceUnitTests.cs" />
+    <Compile Include="Tests\StaticWrappers\IdentifierServiceUnitTests.cs" />
     <Compile Include="Tests\Items\ItemsServiceUnitTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Time\DateTimeServiceUnitTests.cs" />
+    <Compile Include="Tests\StaticWrappers\DateTimeServiceUnitTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -79,6 +79,10 @@
       <Project>{9a218573-e912-4d5b-b988-335e9ccb9ff8}</Project>
       <Name>ItemsListApp.Contracts.UnitTests.Base</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Tests\Identity\" />
+    <Folder Include="Time\" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

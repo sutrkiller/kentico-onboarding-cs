@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using ItemsListApp.Contracts.Services;
 
-namespace ItemsListApp.Services.Time
+namespace ItemsListApp.Services.StaticWrappers
 {
     internal class DateTimeService : IDateTimeService
     {

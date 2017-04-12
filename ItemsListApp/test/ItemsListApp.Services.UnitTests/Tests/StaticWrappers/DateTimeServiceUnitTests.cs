@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
-using ItemsListApp.Services.Time;
+using ItemsListApp.Services.StaticWrappers;
 using NUnit.Framework;
 
-namespace ItemsListApp.Services.UnitTests.Time
+namespace ItemsListApp.Services.UnitTests.Tests.StaticWrappers
 {
     [TestFixture]
     public class DateTimeServiceUnitTests
