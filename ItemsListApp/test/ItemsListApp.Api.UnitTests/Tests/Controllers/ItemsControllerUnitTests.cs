@@ -115,6 +115,22 @@ namespace ItemsListApp.Api.UnitTests.Tests.Controllers
         }
 
         [Test]
+        public async Task Get_WhenDbCollectionEmpty_ReturnsEmptyCollection()
+        {
+            var expected = new List<Item>();
+            _itemsRepository.GetAllAsync().Returns(expected);
+
+
+            var action = await _itemsController.GetAsync();
+            var response = await action.ExecuteAsync(CancellationToken.None);
+            IEnumerable<Item> actual;
+            response.TryGetContentValue(out actual);
+
+            Assert.That(response.IsSuccessStatusCode);
+            Assert.That(actual, Is.EqualTo(expected).AsCollection.UsingItemComparer());
+        }
+
+        [Test]
         public async Task Post_ValidItem_ReturnsCreatedItem()
         {
             var itemId = new Guid("97DDD880-D922-4A0D-BB07-E35339F4F5BE");
