@@ -13,6 +13,12 @@ namespace ItemsListApp.Services.Items
 
         private Item _cachedItem;
 
+        private Item PopCachedItem(Guid id)
+        {
+            var poppedItem = _cachedItem?.Id == id ? _cachedItem : null;
+            _cachedItem = null;
+            return poppedItem;
+        }
 
         public ItemsModificationService(IItemsRepository itemsRepository, IDateTimeService dateTimeService)
         {
@@ -22,8 +28,7 @@ namespace ItemsListApp.Services.Items
 
         public async Task<Item> ReplaceAsync(Item item)
         {
-            var original = _cachedItem ?? await _itemsRepository.GetByIdAsync(item.Id);
-            _cachedItem = null;
+            var original = PopCachedItem(item.Id) ?? await _itemsRepository.GetByIdAsync(item.Id);
 
             if (original == null)
             {
@@ -39,6 +44,9 @@ namespace ItemsListApp.Services.Items
         }
 
         public async Task<bool> DoesExistAsync(Guid id)
-            => (_cachedItem = await _itemsRepository.GetByIdAsync(id)) != null;
+        {
+            _cachedItem = await _itemsRepository.GetByIdAsync(id);
+            return _cachedItem != null;
+        }
     }
 }

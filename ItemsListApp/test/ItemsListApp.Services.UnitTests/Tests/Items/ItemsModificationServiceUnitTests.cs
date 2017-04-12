@@ -58,6 +58,40 @@ namespace ItemsListApp.Services.UnitTests.Tests.Items
         }
 
         [Test]
+        public async Task ReplaceAsync_ValidItemIsCached_UsesCachedItem()
+        {
+            var putItem = new Item
+            {
+                Id = new Guid("95AB19B6-455B-469C-83AA-CD505E9389BD"),
+            };
+            _itemsRepository.GetByIdAsync(putItem.Id).Returns(putItem, (Item)null);
+
+            await _itemsModificationService.DoesExistAsync(putItem.Id);
+            var item = await _itemsModificationService.ReplaceAsync(putItem);
+
+            Assert.That(item.Id, Is.EqualTo(putItem.Id).UsingItemComparer());
+        }
+
+        [Test]
+        public async Task ReplaceAsync_ValidOtherItemIsCached_DoesNotUseCachedItem()
+        {
+            var putItem = new Item
+            {
+                Id = new Guid("95AB19B6-455B-469C-83AA-CD505E9389BD"),
+            };
+            var expiredItem = new Item
+            {
+                Id = new Guid("C026110E-7678-4FB5-9C51-B4FAA546BA1B"),
+            };
+            _itemsRepository.GetByIdAsync(Arg.Any<Guid>()).Returns(expiredItem, putItem);
+
+            await _itemsModificationService.DoesExistAsync(putItem.Id);
+            var item = await _itemsModificationService.ReplaceAsync(putItem);
+
+            Assert.That(item.Id, Is.EqualTo(putItem.Id).UsingItemComparer());
+        }
+
+        [Test]
         public async Task DoesExistAsync_ExistingId_ReturnsTrue()
         {
             var repositoryItem = new Item

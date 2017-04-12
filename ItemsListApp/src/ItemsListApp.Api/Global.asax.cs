@@ -10,7 +10,6 @@ namespace ItemsListApp.Api
             GlobalConfiguration.Configure(WebApiConfig.Register);
             GlobalConfiguration.Configure(DependenciesConfig.Register);
             GlobalConfiguration.Configure(JsonFormatterConfig.Register);
-            
         }
     }
 }
