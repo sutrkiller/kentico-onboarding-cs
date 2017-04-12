@@ -56,9 +56,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Items\ItemsCreationService.cs" />
+    <Compile Include="StaticWrappers\DateTimeService.cs" />
     <Compile Include="DependencyRegister.cs" />
-    <Compile Include="Identity\IdentifierService.cs" />
-    <Compile Include="Items\ItemsService.cs" />
+    <Compile Include="StaticWrappers\IdentifierService.cs" />
+    <Compile Include="Items\ItemsModificationService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -70,6 +72,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

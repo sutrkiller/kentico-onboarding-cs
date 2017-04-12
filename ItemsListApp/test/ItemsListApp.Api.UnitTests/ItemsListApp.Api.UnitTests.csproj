@@ -72,6 +72,8 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="Helpers\ItemPutTestCaseBuilder.cs" />
+    <Compile Include="Helpers\ItemPostTestCaseBuilder.cs" />
     <Compile Include="Helpers\ItemTestCaseBuilder.cs" />
     <Compile Include="Tests\Controllers\ItemsControllerUnitTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

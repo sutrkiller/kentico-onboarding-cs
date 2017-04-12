@@ -1,39 +1,39 @@
 ﻿using System;
-using System.Linq;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using ItemsListApp.Contracts.Models;
 using ItemsListApp.Contracts.Repository;
+using MongoDB.Driver;
 
 namespace ItemsListApp.Repository
 {
     internal class ItemsRepository : IItemsRepository
     {
-        private static readonly Item[] Items =
+        private readonly IMongoCollection<Item> _dbCollection;
+
+        public ItemsRepository(ConnectionOptions connectionOptions)
         {
-            new Item {Id = new Guid("A3672C82-AF6C-44AD-836E-D1C26A0A6359"), Text = "Dummy text 1"},
-            new Item {Id = new Guid("F5CFB0AF-EB26-478B-AF41-7DA314458706"), Text = "Dummy text 2"},
-            new Item {Id = new Guid("A77EE2AF-B6A2-456B-8683-A34B37B6E70F"), Text = "Dummy text 3"},
-            new Item {Id = new Guid("52AD8CCD-E9E9-420B-8C27-47E695993472"), Text = "Dummy text 4"},
-            new Item {Id = new Guid("52637173-064F-4E0C-9CAF-7A43F8AA2D29"), Text = "Dummy text 5"},
-        };
+            const string collectionName = "Items";
+            var client = new MongoClient(connectionOptions.ConnectionString);
+            var databaseName = MongoUrl.Create(connectionOptions.ConnectionString).DatabaseName;
+            var database = client.GetDatabase(databaseName);
+            _dbCollection = database.GetCollection<Item>(collectionName);
+        }
 
         public async Task AddAsync(Item item)
-            => await Task.CompletedTask;
+            => await _dbCollection.InsertOneAsync(item);
 
         public async Task<Item> GetByIdAsync(Guid id)
-            => await Task.FromResult(new Item
-            {
-                Id = id,
-                Text = "New dummy text",
-            });
+            => await _dbCollection.Find(value => value.Id == id).FirstOrDefaultAsync();
 
-        public async Task<IQueryable<Item>> GetAllAsync()
-            => await Task.FromResult(Items.AsQueryable());
+        public async Task<IEnumerable<Item>> GetAllAsync()
+            => (await _dbCollection.FindAsync(FilterDefinition<Item>.Empty))
+                .ToEnumerable();
 
         public async Task UpdateAsync(Item item)
-            => await Task.CompletedTask;
+            => await _dbCollection.ReplaceOneAsync(value => value.Id == item.Id, item);
 
         public async Task<Item> RemoveByIdAsync(Guid id)
-            => await Task.FromResult(Items[3]);
+            => await _dbCollection.FindOneAndDeleteAsync(item => item.Id == id);
     }
 }

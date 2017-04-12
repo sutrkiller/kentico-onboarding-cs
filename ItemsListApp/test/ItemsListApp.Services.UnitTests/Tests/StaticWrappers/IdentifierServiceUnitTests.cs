@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Threading.Tasks;
-using ItemsListApp.Services.Identity;
+using ItemsListApp.Services.StaticWrappers;
 using NUnit.Framework;
 
-namespace ItemsListApp.Services.UnitTests.Tests.Identity
+namespace ItemsListApp.Services.UnitTests.Tests.StaticWrappers
 {
-    [TestFixture()]
-    public class IdGeneratorServiceUnitTests
+    [TestFixture]
+    public class IdentifierServiceUnitTests
     {
         private IdentifierService _identifier;
 

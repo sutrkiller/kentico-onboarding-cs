@@ -5,47 +5,56 @@ using NUnit.Framework;
 
 namespace ItemsListApp.Api.UnitTests.Helpers
 {
-    internal class ItemTestCaseBuilder
+    internal abstract class ItemTestCaseBuilder
     {
-        private Item _item;
+        private readonly Lazy<Item> _item;
+
+        protected abstract Item CreateValidItem();
+
         private readonly HashSet<string> _invalidParts = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-        public ItemTestCaseBuilder(Item item = null)
+        private Item Item => _item.Value;
+
+        protected ItemTestCaseBuilder()
         {
-            _item = item;
+            _item = new Lazy<Item>(CreateValidItem);
         }
 
-        public ItemTestCaseBuilder Id(Guid id)
+        public ItemTestCaseBuilder InvalidateId(Guid id)
         {
-            CreateIfNotExists();
-            _item.Id = id;
+            Item.Id = id;
+            _invalidParts.Add(nameof(Item.Id));
             return this;
         }
 
-        public ItemTestCaseBuilder Text(string text)
+        public ItemTestCaseBuilder InvalidateText(string text)
         {
-            CreateIfNotExists();
-            _item.Text = text;
+            Item.Text = text;
+            _invalidParts.Add(nameof(Item.Text));
             return this;
         }
 
-        public ItemTestCaseBuilder InvalidParts(params string[] invalidParts)
+        public ItemTestCaseBuilder InvalidateCreationTime(DateTime time)
         {
-            _invalidParts.UnionWith(invalidParts);
+            Item.CreationTime = time;
+            _invalidParts.Add(nameof(Item.CreationTime));
             return this;
         }
 
-        public TestCaseData Build()
+        public ItemTestCaseBuilder InvalidateLastUpdateTime(DateTime time)
         {
-         return new TestCaseData(_item, _invalidParts);
+            Item.LastUpdateTime = time;
+            _invalidParts.Add(nameof(Item.LastUpdateTime));
+            return this;
         }
 
-        private void CreateIfNotExists()
+        public TestCaseData Build() 
+            => new TestCaseData(Item, _invalidParts);
+
+        public TestCaseData BuildInvalidItem()
         {
-            if (_item == null)
-            {
-                _item = new Item();
-            }
+            _invalidParts.Add(nameof(Item));
+            return new TestCaseData(null, _invalidParts);
         }
     }
 }

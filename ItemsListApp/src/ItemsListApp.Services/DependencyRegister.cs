@@ -1,7 +1,7 @@
 ﻿using ItemsListApp.Contracts.DependecnyInjection;
 using ItemsListApp.Contracts.Services;
-using ItemsListApp.Services.Identity;
 using ItemsListApp.Services.Items;
+using ItemsListApp.Services.StaticWrappers;
 using Microsoft.Practices.Unity;
 
 namespace ItemsListApp.Services
@@ -10,8 +10,10 @@ namespace ItemsListApp.Services
     {
         public void Register(IUnityContainer container)
         {
-            container.RegisterType<IItemsService, ItemsService>(new ContainerControlledLifetimeManager());
-            container.RegisterType<IIdentifierService, IdentifierService>(new ContainerControlledLifetimeManager());
+            container.RegisterType<IItemsModificationService, ItemsModificationService>(new HierarchicalLifetimeManager());
+            container.RegisterType<IItemsCreationService, ItemsCreationService>(new HierarchicalLifetimeManager());
+            container.RegisterType<IDateTimeService, DateTimeService>(new HierarchicalLifetimeManager());
+            container.RegisterType<IIdentifierService, IdentifierService>(new HierarchicalLifetimeManager());
         }
     }
 }

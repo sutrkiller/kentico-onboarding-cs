@@ -103,6 +103,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\DependenciesConfig.cs" />
+    <Compile Include="App_Start\JsonFormatterConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\ItemsController.cs" />
     <Compile Include="DependencyInjection\UnityResolver.cs" />
@@ -115,6 +116,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
+    <Content Include="ConnectionStrings.config" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
