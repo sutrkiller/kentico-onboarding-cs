@@ -210,12 +210,41 @@ namespace ItemsListApp.Api.UnitTests.Tests.Controllers
         [Test]
         public async Task Delete_IdOfExistingItem_ReturnsNoContentStatusCode()
         {
-            var id = Guid.NewGuid();
+            var id = new Guid("999EA6F0-4139-4D54-B4DD-4976A35D1DFA");
+            _itemsService.ExistsAsync(id).Returns(true);
+
 
             var action = await _itemsController.DeleteAsync(id);
             var response = await action.ExecuteAsync(CancellationToken.None);
 
             Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NoContent));
+        }
+
+        [Test]
+        public async Task Delete_InvalidId_ReturnsBadRequestStatusCode()
+        {
+            var id = Guid.Empty;
+
+            var action = await _itemsController.DeleteAsync(id);
+            var response = await action.ExecuteAsync(CancellationToken.None);
+            HttpError actual;
+            response.TryGetContentValue(out actual);
+
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+            Assert.That(actual.ModelState.Keys, Is.EquivalentTo(new [] {nameof(Item.Id)}).IgnoreCase);
+        }
+
+        [Test]
+        public async Task Delete_IdOfNonExistingItem_ReturnsNotFoundStatusCode()
+        {
+            var id = new Guid("999EA6F0-4139-4D54-B4DD-4976A35D1DFA");
+            _itemsService.ExistsAsync(id).Returns(false);
+
+
+            var action = await _itemsController.DeleteAsync(id);
+            var response = await action.ExecuteAsync(CancellationToken.None);
+
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
         }
 
         private class InvalidPostTestCases : IEnumerable<TestCaseData>

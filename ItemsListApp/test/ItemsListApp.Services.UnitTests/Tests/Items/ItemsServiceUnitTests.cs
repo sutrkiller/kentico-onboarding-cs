@@ -54,6 +54,32 @@ namespace ItemsListApp.Services.UnitTests.Tests.Items
         }
 
         [Test]
+        public async Task CreateNewAsync_ItemWithValidId_ReturnsNewItemWithOriginalId()
+        {
+            var creationTime = new DateTime(year: 2017, month: 4, day: 6, hour: 12, minute: 12, second: 50);
+            var postItem = new Item
+            {
+                Id = new Guid("95AB19B6-455B-469C-83AA-CD505E9389BD"),
+                Text = "text of new item"
+            };
+            var expectedItem = new Item
+            {
+                Id = postItem.Id,
+                Text = postItem.Text,
+                CreationTime = creationTime,
+                LastUpdateTime = creationTime,
+            };
+            Item storedItem = null;
+            _itemsRepository.AddAsync(Arg.Do<Item>(item => { storedItem = item; })).Returns(Task.CompletedTask);
+            _dateTimeService.GetCurrentDateAsync().Returns(creationTime);
+
+            var newItem = await _itemsService.CreateNewAsync(postItem);
+
+            Assert.That(storedItem, Is.EqualTo(expectedItem).UsingItemComparer());
+            Assert.That(newItem, Is.EqualTo(expectedItem).UsingItemComparer());
+        }
+
+        [Test]
         public async Task ReplaceExistingAsync_ValidItem_ReturnsSameItemWithUpdatedTime()
         {
             var creationTime = new DateTime(year: 2017, month: 4, day: 6, hour: 12, minute: 12, second: 50);

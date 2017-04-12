@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http;
 using ItemsListApp.Contracts.Api;
@@ -29,14 +30,14 @@ namespace ItemsListApp.Api.Controllers
         {
             //var allItems = await _itemsesRepository.GetAllAsync();
             var allItems = await _itemsRepository.GetAllAsync();
-
+            Thread.Sleep(2000);
             return Ok(allItems);
         }
 
         // GET api/v1/items/5
         public async Task<IHttpActionResult> GetAsync(Guid id)
         {
-            ValidateGetId(id);
+            ValidateIdParam(id);
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
@@ -82,7 +83,7 @@ namespace ItemsListApp.Api.Controllers
                 return Ok(editedItem);
             }
 
-            var created = await _itemsService.CreateNewAsync(item); //should be created with item.Id (probably)
+            var created = await _itemsService.CreateNewAsync(item);
             var location = _itemLocationHelper.CreateLocation(created.Id);
             return Created(location, created);
         }
@@ -90,6 +91,16 @@ namespace ItemsListApp.Api.Controllers
         // DELETE api/v1/items/5
         public async Task<IHttpActionResult> DeleteAsync(Guid id)
         {
+            ValidateIdParam(id);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            if (!await _itemsService.ExistsAsync(id))
+            {
+                return NotFound();
+            }
+
             await _itemsRepository.RemoveByIdAsync(id);
 
             return StatusCode(HttpStatusCode.NoContent);
@@ -109,7 +120,7 @@ namespace ItemsListApp.Api.Controllers
             ValidateNonIdentifierProperties(item);
         }
 
-        private void ValidateGetId(Guid id)
+        private void ValidateIdParam(Guid id)
         {
             if (!ModelState.IsValid)
             {
