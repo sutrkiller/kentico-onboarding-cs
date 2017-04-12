@@ -24,20 +24,20 @@ namespace ItemsListApp.Api.UnitTests.Tests.Controllers
     {
         private ItemsController _itemsController;
 
-        private ICreateItemsService _createItemsService;
-        private IExistingItemsService _existingItemsService;
+        private IItemsCreationService _itemsCreationService;
+        private IItemsModificationService _itemsModificationService;
         private IItemLocationHelper _itemLocationHelper;
         private IItemsRepository _itemsRepository;
 
         [SetUp]
         public void SetUp()
         {
-            _createItemsService = Substitute.For<ICreateItemsService>();
-            _existingItemsService = Substitute.For<IExistingItemsService>();
+            _itemsCreationService = Substitute.For<IItemsCreationService>();
+            _itemsModificationService = Substitute.For<IItemsModificationService>();
             _itemLocationHelper = Substitute.For<IItemLocationHelper>();
             _itemsRepository = Substitute.For<IItemsRepository>();
 
-            _itemsController = new ItemsController(_createItemsService, _existingItemsService, _itemsRepository, _itemLocationHelper)
+            _itemsController = new ItemsController(_itemsCreationService, _itemsModificationService, _itemsRepository, _itemLocationHelper)
             {
                 Request = new HttpRequestMessage(),
                 Configuration = new HttpConfiguration(),
@@ -144,7 +144,7 @@ namespace ItemsListApp.Api.UnitTests.Tests.Controllers
                 Text = postItem.Text,
             };
             _itemLocationHelper.CreateLocation(itemId).Returns($"dummy location/{itemId}");
-            _createItemsService.CreateNewAsync(postItem).Returns(expected);
+            _itemsCreationService.CreateNewAsync(postItem).Returns(expected);
 
             var action = await _itemsController.PostAsync(postItem);
             var response = await action.ExecuteAsync(CancellationToken.None);
@@ -176,8 +176,8 @@ namespace ItemsListApp.Api.UnitTests.Tests.Controllers
                 Id = new Guid("999EA6F0-4139-4D54-B4DD-4976A35D1DFA"),
                 Text = "Text of required item",
             };
-            _existingItemsService.DoesExistAsync(expected.Id).Returns(true);
-            _existingItemsService.ReplaceAsync(expected).Returns(expected);
+            _itemsModificationService.DoesExistAsync(expected.Id).Returns(true);
+            _itemsModificationService.ReplaceAsync(expected).Returns(expected);
 
             var action = await _itemsController.PutAsync(expected);
             var response = await action.ExecuteAsync(CancellationToken.None);
@@ -201,8 +201,8 @@ namespace ItemsListApp.Api.UnitTests.Tests.Controllers
                 Id = new Guid("999EA6F0-4139-4D54-B4DD-4976A35D1DFA"),
                 Text = putItem.Text,
             };
-            _existingItemsService.DoesExistAsync(putItem.Id).Returns(false);
-            _createItemsService.CreateNewAsync(putItem, putItem.Id).Returns(expected);
+            _itemsModificationService.DoesExistAsync(putItem.Id).Returns(false);
+            _itemsCreationService.CreateNewAsync(putItem, putItem.Id).Returns(expected);
 
             var action = await _itemsController.PutAsync(putItem);
             var response = await action.ExecuteAsync(CancellationToken.None);
@@ -229,7 +229,7 @@ namespace ItemsListApp.Api.UnitTests.Tests.Controllers
         public async Task Delete_IdOfExistingItem_ReturnsNoContentStatusCode()
         {
             var id = new Guid("999EA6F0-4139-4D54-B4DD-4976A35D1DFA");
-            _existingItemsService.DoesExistAsync(id).Returns(true);
+            _itemsModificationService.DoesExistAsync(id).Returns(true);
 
 
             var action = await _itemsController.DeleteAsync(id);
@@ -256,7 +256,7 @@ namespace ItemsListApp.Api.UnitTests.Tests.Controllers
         public async Task Delete_IdOfNonExistingItem_ReturnsNotFoundStatusCode()
         {
             var id = new Guid("999EA6F0-4139-4D54-B4DD-4976A35D1DFA");
-            _existingItemsService.DoesExistAsync(id).Returns(false);
+            _itemsModificationService.DoesExistAsync(id).Returns(false);
 
 
             var action = await _itemsController.DeleteAsync(id);

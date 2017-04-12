@@ -6,13 +6,13 @@ using ItemsListApp.Contracts.Services;
 
 namespace ItemsListApp.Services.Items
 {
-    internal class CreateItemsService : ICreateItemsService
+    internal class ItemsCreationService : IItemsCreationService
     {
         private readonly IItemsRepository _itemsRepository;
         private readonly IDateTimeService _dateTimeService;
         private readonly IIdentifierService _identifierService;
 
-        public CreateItemsService(IItemsRepository itemsRepository, IIdentifierService identifierService,
+        public ItemsCreationService(IItemsRepository itemsRepository, IIdentifierService identifierService,
             IDateTimeService dateTimeService)
         {
             _itemsRepository = itemsRepository;

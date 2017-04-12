@@ -10,8 +10,8 @@ namespace ItemsListApp.Services
     {
         public void Register(IUnityContainer container)
         {
-            container.RegisterType<IExistingItemsService, ExistingItemsService>(new HierarchicalLifetimeManager());
-            container.RegisterType<ICreateItemsService, CreateItemsService>(new HierarchicalLifetimeManager());
+            container.RegisterType<IItemsModificationService, ItemsModificationService>(new HierarchicalLifetimeManager());
+            container.RegisterType<IItemsCreationService, ItemsCreationService>(new HierarchicalLifetimeManager());
             container.RegisterType<IDateTimeService, DateTimeService>(new HierarchicalLifetimeManager());
             container.RegisterType<IIdentifierService, IdentifierService>(new HierarchicalLifetimeManager());
         }

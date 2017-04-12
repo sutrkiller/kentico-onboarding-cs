@@ -6,7 +6,7 @@ using ItemsListApp.Contracts.Services;
 
 namespace ItemsListApp.Services.Items
 {
-    internal class ExistingItemsService : IExistingItemsService
+    internal class ItemsModificationService : IItemsModificationService
     {
         private readonly IItemsRepository _itemsRepository;
         private readonly IDateTimeService _dateTimeService;
@@ -14,7 +14,7 @@ namespace ItemsListApp.Services.Items
         private Item _cachedItem;
 
 
-        public ExistingItemsService(IItemsRepository itemsRepository, IDateTimeService dateTimeService)
+        public ItemsModificationService(IItemsRepository itemsRepository, IDateTimeService dateTimeService)
         {
             _itemsRepository = itemsRepository;
             _dateTimeService = dateTimeService;

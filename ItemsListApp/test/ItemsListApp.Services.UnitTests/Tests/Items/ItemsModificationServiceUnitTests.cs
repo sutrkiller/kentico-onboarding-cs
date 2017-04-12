@@ -11,9 +11,9 @@ using NUnit.Framework;
 namespace ItemsListApp.Services.UnitTests.Tests.Items
 {
     [TestFixture]
-    public class ExistingItemsServiceUnitTests
+    public class ItemsModificationServiceUnitTests
     {
-        private ExistingItemsService _existingItemsService;
+        private ItemsModificationService _itemsModificationService;
         private IItemsRepository _itemsRepository;
         private IDateTimeService _dateTimeService;
 
@@ -22,7 +22,7 @@ namespace ItemsListApp.Services.UnitTests.Tests.Items
         {
             _itemsRepository = Substitute.For<IItemsRepository>();
             _dateTimeService = Substitute.For<IDateTimeService>();
-            _existingItemsService = new ExistingItemsService(_itemsRepository, _dateTimeService);
+            _itemsModificationService = new ItemsModificationService(_itemsRepository, _dateTimeService);
         }
 
         [Test]
@@ -52,7 +52,7 @@ namespace ItemsListApp.Services.UnitTests.Tests.Items
             _dateTimeService.GetCurrentDateAsync().Returns(updateTime);
             _itemsRepository.GetByIdAsync(putItem.Id).Returns(repositoryItem);
 
-            var item = await _existingItemsService.ReplaceAsync(putItem);
+            var item = await _itemsModificationService.ReplaceAsync(putItem);
 
             Assert.That(item, Is.EqualTo(expected).UsingItemComparer());
         }
@@ -67,7 +67,7 @@ namespace ItemsListApp.Services.UnitTests.Tests.Items
             };
             _itemsRepository.GetByIdAsync(repositoryItem.Id).Returns(repositoryItem);
 
-            var exists = await _existingItemsService.DoesExistAsync(repositoryItem.Id);
+            var exists = await _itemsModificationService.DoesExistAsync(repositoryItem.Id);
 
             Assert.That(exists);
         }
@@ -78,7 +78,7 @@ namespace ItemsListApp.Services.UnitTests.Tests.Items
             var id = new Guid("95AB19B6-455B-469C-83AA-CD505E9389BD");
             _itemsRepository.GetByIdAsync(id).Returns((Item)null);
 
-            var exists = await _existingItemsService.DoesExistAsync(id);
+            var exists = await _itemsModificationService.DoesExistAsync(id);
 
             Assert.That(!exists);
         }

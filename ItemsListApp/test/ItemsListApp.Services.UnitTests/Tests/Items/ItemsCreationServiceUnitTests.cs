@@ -11,9 +11,9 @@ using NUnit.Framework;
 namespace ItemsListApp.Services.UnitTests.Tests.Items
 {
     [TestFixture]
-    public class CreateItemsServiceUnitTests
+    public class ItemsCreationServiceUnitTests
     {
-        private CreateItemsService _createItemsService;
+        private ItemsCreationService _itemsCreationService;
         private IItemsRepository _itemsRepository;
         private IDateTimeService _dateTimeService;
         private IIdentifierService _identifierService;
@@ -24,7 +24,7 @@ namespace ItemsListApp.Services.UnitTests.Tests.Items
             _itemsRepository = Substitute.For<IItemsRepository>();
             _dateTimeService = Substitute.For<IDateTimeService>();
             _identifierService = Substitute.For<IIdentifierService>();
-            _createItemsService = new CreateItemsService(_itemsRepository, _identifierService, _dateTimeService);
+            _itemsCreationService = new ItemsCreationService(_itemsRepository, _identifierService, _dateTimeService);
         }
 
         [Test]
@@ -47,7 +47,7 @@ namespace ItemsListApp.Services.UnitTests.Tests.Items
             _itemsRepository.AddAsync(Arg.Do<Item>(item => { storedItem = item; })).Returns(Task.CompletedTask);
             _dateTimeService.GetCurrentDateAsync().Returns(creationTime);
 
-            var newItem = await _createItemsService.CreateNewAsync(postItem);
+            var newItem = await _itemsCreationService.CreateNewAsync(postItem);
 
             Assert.That(storedItem, Is.EqualTo(expectedItem).UsingItemComparer());
             Assert.That(newItem, Is.EqualTo(expectedItem).UsingItemComparer());
@@ -73,7 +73,7 @@ namespace ItemsListApp.Services.UnitTests.Tests.Items
             _itemsRepository.AddAsync(Arg.Do<Item>(item => { storedItem = item; })).Returns(Task.CompletedTask);
             _dateTimeService.GetCurrentDateAsync().Returns(creationTime);
 
-            var newItem = await _createItemsService.CreateNewAsync(postItem, postItem.Id);
+            var newItem = await _itemsCreationService.CreateNewAsync(postItem, postItem.Id);
 
             Assert.That(storedItem, Is.EqualTo(expectedItem).UsingItemComparer());
             Assert.That(newItem, Is.EqualTo(expectedItem).UsingItemComparer());

@@ -4,7 +4,7 @@ using ItemsListApp.Contracts.Models;
 
 namespace ItemsListApp.Contracts.Services
 {
-    public interface IExistingItemsService
+    public interface IItemsModificationService
     {
         Task<Item> ReplaceAsync(Item item);
 

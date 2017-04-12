@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Net;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http;
 using ItemsListApp.Contracts.Api;
@@ -13,16 +12,16 @@ namespace ItemsListApp.Api.Controllers
     //api/v1/items
     public class ItemsController : ApiController
     {
-        private readonly ICreateItemsService _createItemsService;
-        private readonly IExistingItemsService _existingItemsService;
+        private readonly IItemsCreationService _itemsCreationService;
+        private readonly IItemsModificationService _itemsModificationService;
         private readonly IItemsRepository _itemsRepository;
         private readonly IItemLocationHelper _itemLocationHelper;
 
-        public ItemsController(ICreateItemsService createItemsService, IExistingItemsService existingItemsService, IItemsRepository itemsRepository,
+        public ItemsController(IItemsCreationService itemsCreationService, IItemsModificationService itemsModificationService, IItemsRepository itemsRepository,
             IItemLocationHelper itemLocationHelper)
         {
-            _createItemsService = createItemsService;
-            _existingItemsService = existingItemsService;
+            _itemsCreationService = itemsCreationService;
+            _itemsModificationService = itemsModificationService;
             _itemsRepository = itemsRepository;
             _itemLocationHelper = itemLocationHelper;
         }
@@ -31,14 +30,13 @@ namespace ItemsListApp.Api.Controllers
         public async Task<IHttpActionResult> GetAsync()
         {
             var allItems = await _itemsRepository.GetAllAsync();
-            Thread.Sleep(2000);
             return Ok(allItems);
         }
 
         // GET api/v1/items/5
         public async Task<IHttpActionResult> GetAsync(Guid id)
         {
-            ValidateIdParam(id);
+            ValidateIdParameter(id);
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
@@ -63,7 +61,7 @@ namespace ItemsListApp.Api.Controllers
                 return BadRequest(ModelState);
             }
 
-            var newItem = await _createItemsService.CreateNewAsync(item);
+            var newItem = await _itemsCreationService.CreateNewAsync(item);
             var location = _itemLocationHelper.CreateLocation(newItem.Id);
 
             return Created(location, newItem);
@@ -78,13 +76,13 @@ namespace ItemsListApp.Api.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (await _existingItemsService.DoesExistAsync(item.Id))
+            if (await _itemsModificationService.DoesExistAsync(item.Id))
             {
-                var editedItem = await _existingItemsService.ReplaceAsync(item);
+                var editedItem = await _itemsModificationService.ReplaceAsync(item);
                 return Ok(editedItem);
             }
 
-            var created = await _createItemsService.CreateNewAsync(item, item.Id);
+            var created = await _itemsCreationService.CreateNewAsync(item, item.Id);
             var location = _itemLocationHelper.CreateLocation(created.Id);
             return Created(location, created);
         }
@@ -92,12 +90,12 @@ namespace ItemsListApp.Api.Controllers
         // DELETE api/v1/items/5
         public async Task<IHttpActionResult> DeleteAsync(Guid id)
         {
-            ValidateIdParam(id);
+            ValidateIdParameter(id);
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            if (!await _existingItemsService.DoesExistAsync(id))
+            if (!await _itemsModificationService.DoesExistAsync(id))
             {
                 return NotFound();
             }
@@ -121,7 +119,7 @@ namespace ItemsListApp.Api.Controllers
             ValidateNonIdentifierProperties(item);
         }
 
-        private void ValidateIdParam(Guid id)
+        private void ValidateIdParameter(Guid id)
         {
             if (!ModelState.IsValid)
             {

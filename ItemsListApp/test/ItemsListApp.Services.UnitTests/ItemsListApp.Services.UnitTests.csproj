@@ -58,9 +58,9 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="Tests\Items\CreateItemsServiceUnitTests.cs" />
+    <Compile Include="Tests\Items\ItemsCreationServiceUnitTests.cs" />
     <Compile Include="Tests\StaticWrappers\IdentifierServiceUnitTests.cs" />
-    <Compile Include="Tests\Items\ExistingItemsServiceUnitTests.cs" />
+    <Compile Include="Tests\Items\ItemsModificationServiceUnitTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tests\StaticWrappers\DateTimeServiceUnitTests.cs" />
   </ItemGroup>
