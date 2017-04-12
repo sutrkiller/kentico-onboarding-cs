@@ -15,7 +15,8 @@ namespace ItemsListApp.Repository
         {
             const string collectionName = "Items";
             var client = new MongoClient(connectionOptions.ConnectionString);
-            var database = client.GetDatabase(connectionOptions.DatabaseName);
+            var databaseName = MongoUrl.Create(connectionOptions.ConnectionString).DatabaseName;
+            var database = client.GetDatabase(databaseName);
             _dbCollection = database.GetCollection<Item>(collectionName);
         }
 

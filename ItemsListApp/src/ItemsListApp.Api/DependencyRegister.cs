@@ -18,13 +18,8 @@ namespace ItemsListApp.Api
                 new InjectionFactory(GetCurrentRequestMessage));
             container.RegisterType<IItemLocationHelper, ItemLocationHelper>(new HierarchicalLifetimeManager());
 
-            const string databaseName = "items_list_app_db";
-            container.RegisterInstance(typeof(ConnectionOptions),
-                new ConnectionOptions
-                {
-                    ConnectionString = ConfigurationManager.ConnectionStrings["MongoDbConnection"]?.ConnectionString,
-                    DatabaseName = databaseName,
-                });
+            var connectionString = ConfigurationManager.ConnectionStrings["MongoDbConnection"].ConnectionString;
+            container.RegisterInstance(new ConnectionOptions {ConnectionString = connectionString});
         }
 
         private static HttpRequestMessage GetCurrentRequestMessage(IUnityContainer container)
