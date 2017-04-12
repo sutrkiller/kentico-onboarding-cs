@@ -56,10 +56,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Items\CreateItemsService.cs" />
     <Compile Include="StaticWrappers\DateTimeService.cs" />
     <Compile Include="DependencyRegister.cs" />
     <Compile Include="StaticWrappers\IdentifierService.cs" />
-    <Compile Include="Items\ItemsService.cs" />
+    <Compile Include="Items\ExistingItemsService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

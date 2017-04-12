@@ -4,11 +4,9 @@ using ItemsListApp.Contracts.Models;
 
 namespace ItemsListApp.Contracts.Services
 {
-    public interface IItemsService
+    public interface IExistingItemsService
     {
-        Task<Item> CreateNewAsync(Item item);
-
-        Task<Item> ReplaceExistingAsync(Item item);
+        Task<Item> ReplaceAsync(Item item);
 
         Task<bool> ExistsAsync(Guid id);
     }

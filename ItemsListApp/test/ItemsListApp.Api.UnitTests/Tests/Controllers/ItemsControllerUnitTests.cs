@@ -24,18 +24,20 @@ namespace ItemsListApp.Api.UnitTests.Tests.Controllers
     {
         private ItemsController _itemsController;
 
-        private IItemsService _itemsService;
+        private ICreateItemsService _createItemsService;
+        private IExistingItemsService _existingItemsService;
         private IItemLocationHelper _itemLocationHelper;
         private IItemsRepository _itemsRepository;
 
         [SetUp]
         public void SetUp()
         {
-            _itemsService = Substitute.For<IItemsService>();
+            _createItemsService = Substitute.For<ICreateItemsService>();
+            _existingItemsService = Substitute.For<IExistingItemsService>();
             _itemLocationHelper = Substitute.For<IItemLocationHelper>();
             _itemsRepository = Substitute.For<IItemsRepository>();
 
-            _itemsController = new ItemsController(_itemsService, _itemsRepository, _itemLocationHelper)
+            _itemsController = new ItemsController(_createItemsService, _existingItemsService, _itemsRepository, _itemLocationHelper)
             {
                 Request = new HttpRequestMessage(),
                 Configuration = new HttpConfiguration(),
@@ -126,7 +128,7 @@ namespace ItemsListApp.Api.UnitTests.Tests.Controllers
                 Text = postItem.Text,
             };
             _itemLocationHelper.CreateLocation(itemId).Returns($"dummy location/{itemId}");
-            _itemsService.CreateNewAsync(postItem).Returns(expected);
+            _createItemsService.CreateNewAsync(postItem).Returns(expected);
 
             var action = await _itemsController.PostAsync(postItem);
             var response = await action.ExecuteAsync(CancellationToken.None);
@@ -158,8 +160,8 @@ namespace ItemsListApp.Api.UnitTests.Tests.Controllers
                 Id = new Guid("999EA6F0-4139-4D54-B4DD-4976A35D1DFA"),
                 Text = "InvalidateText of required item",
             };
-            _itemsService.ExistsAsync(expected.Id).Returns(true);
-            _itemsService.ReplaceExistingAsync(expected).Returns(expected);
+            _existingItemsService.ExistsAsync(expected.Id).Returns(true);
+            _existingItemsService.ReplaceAsync(expected).Returns(expected);
 
             var action = await _itemsController.PutAsync(expected);
             var response = await action.ExecuteAsync(CancellationToken.None);
@@ -183,8 +185,8 @@ namespace ItemsListApp.Api.UnitTests.Tests.Controllers
                 Id = new Guid("999EA6F0-4139-4D54-B4DD-4976A35D1DFA"),
                 Text = putItem.Text,
             };
-            _itemsService.ExistsAsync(putItem.Id).Returns(false);
-            _itemsService.CreateNewAsync(putItem).Returns(expected);
+            _existingItemsService.ExistsAsync(putItem.Id).Returns(false);
+            _createItemsService.CreateNewAsync(putItem, putItem.Id).Returns(expected);
 
             var action = await _itemsController.PutAsync(putItem);
             var response = await action.ExecuteAsync(CancellationToken.None);
@@ -211,7 +213,7 @@ namespace ItemsListApp.Api.UnitTests.Tests.Controllers
         public async Task Delete_IdOfExistingItem_ReturnsNoContentStatusCode()
         {
             var id = new Guid("999EA6F0-4139-4D54-B4DD-4976A35D1DFA");
-            _itemsService.ExistsAsync(id).Returns(true);
+            _existingItemsService.ExistsAsync(id).Returns(true);
 
 
             var action = await _itemsController.DeleteAsync(id);
@@ -238,7 +240,7 @@ namespace ItemsListApp.Api.UnitTests.Tests.Controllers
         public async Task Delete_IdOfNonExistingItem_ReturnsNotFoundStatusCode()
         {
             var id = new Guid("999EA6F0-4139-4D54-B4DD-4976A35D1DFA");
-            _itemsService.ExistsAsync(id).Returns(false);
+            _existingItemsService.ExistsAsync(id).Returns(false);
 
 
             var action = await _itemsController.DeleteAsync(id);

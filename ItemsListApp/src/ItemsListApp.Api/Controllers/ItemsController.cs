@@ -13,14 +13,16 @@ namespace ItemsListApp.Api.Controllers
     //api/v1/items
     public class ItemsController : ApiController
     {
-        private readonly IItemsService _itemsService;
+        private readonly ICreateItemsService _createItemsService;
+        private readonly IExistingItemsService _existingItemsService;
         private readonly IItemsRepository _itemsRepository;
         private readonly IItemLocationHelper _itemLocationHelper;
 
-        public ItemsController(IItemsService itemsService, IItemsRepository itemsRepository,
+        public ItemsController(ICreateItemsService createItemsService, IExistingItemsService existingItemsService, IItemsRepository itemsRepository,
             IItemLocationHelper itemLocationHelper)
         {
-            _itemsService = itemsService;
+            _createItemsService = createItemsService;
+            _existingItemsService = existingItemsService;
             _itemsRepository = itemsRepository;
             _itemLocationHelper = itemLocationHelper;
         }
@@ -62,7 +64,7 @@ namespace ItemsListApp.Api.Controllers
                 return BadRequest(ModelState);
             }
 
-            var newItem = await _itemsService.CreateNewAsync(item);
+            var newItem = await _createItemsService.CreateNewAsync(item);
             var location = _itemLocationHelper.CreateLocation(newItem.Id);
 
             return Created(location, newItem);
@@ -77,13 +79,13 @@ namespace ItemsListApp.Api.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (await _itemsService.ExistsAsync(item.Id))
+            if (await _existingItemsService.ExistsAsync(item.Id))
             {
-                var editedItem = await _itemsService.ReplaceExistingAsync(item);
+                var editedItem = await _existingItemsService.ReplaceAsync(item);
                 return Ok(editedItem);
             }
 
-            var created = await _itemsService.CreateNewAsync(item);
+            var created = await _createItemsService.CreateNewAsync(item, item.Id);
             var location = _itemLocationHelper.CreateLocation(created.Id);
             return Created(location, created);
         }
@@ -96,7 +98,7 @@ namespace ItemsListApp.Api.Controllers
             {
                 return BadRequest(ModelState);
             }
-            if (!await _itemsService.ExistsAsync(id))
+            if (!await _existingItemsService.ExistsAsync(id))
             {
                 return NotFound();
             }

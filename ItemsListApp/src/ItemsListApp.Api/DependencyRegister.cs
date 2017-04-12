@@ -18,13 +18,16 @@ namespace ItemsListApp.Api
                 new InjectionFactory(GetCurrentRequestMessage));
             container.RegisterType<IItemLocationHelper, ItemLocationHelper>(new HierarchicalLifetimeManager());
 
-            var connectionString = ConfigurationManager.ConnectionStrings["MongoDbConnection"].ConnectionString;
-            container.RegisterInstance(new ConnectionOptions {ConnectionString = connectionString});
+            container.RegisterInstance(GetConnectionOptions());
         }
 
-        private static HttpRequestMessage GetCurrentRequestMessage(IUnityContainer container)
-        {
-            return (HttpRequestMessage)HttpContext.Current.Items["MS_HttpRequestMessage"];
-        }
+        private static HttpRequestMessage GetCurrentRequestMessage(IUnityContainer container) 
+            => (HttpRequestMessage)HttpContext.Current.Items["MS_HttpRequestMessage"];
+
+        private static ConnectionOptions GetConnectionOptions() 
+            => new ConnectionOptions
+            {
+                ConnectionString = ConfigurationManager.ConnectionStrings["MongoDbConnection"].ConnectionString
+            };
     }
 }
