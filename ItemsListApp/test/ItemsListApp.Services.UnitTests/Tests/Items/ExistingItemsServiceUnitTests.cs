@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using ItemsListApp.Contracts.Models;
 using ItemsListApp.Contracts.Repository;
@@ -58,7 +58,7 @@ namespace ItemsListApp.Services.UnitTests.Tests.Items
         }
 
         [Test]
-        public async Task ExistsAsync_ExistingId_ReturnsTrue()
+        public async Task DoesExistAsync_ExistingId_ReturnsTrue()
         {
             var repositoryItem = new Item
             {
@@ -67,18 +67,18 @@ namespace ItemsListApp.Services.UnitTests.Tests.Items
             };
             _itemsRepository.GetByIdAsync(repositoryItem.Id).Returns(repositoryItem);
 
-            var exists = await _existingItemsService.ExistsAsync(repositoryItem.Id);
+            var exists = await _existingItemsService.DoesExistAsync(repositoryItem.Id);
 
             Assert.That(exists);
         }
 
         [Test]
-        public async Task ExistsAsync_NonExistingId_ReturnsTrue()
+        public async Task DoesExistAsync_NonExistingId_ReturnsTrue()
         {
             var id = new Guid("95AB19B6-455B-469C-83AA-CD505E9389BD");
             _itemsRepository.GetByIdAsync(id).Returns((Item)null);
 
-            var exists = await _existingItemsService.ExistsAsync(id);
+            var exists = await _existingItemsService.DoesExistAsync(id);
 
             Assert.That(!exists);
         }

@@ -8,6 +8,6 @@ namespace ItemsListApp.Contracts.Services
     {
         Task<Item> ReplaceAsync(Item item);
 
-        Task<bool> ExistsAsync(Guid id);
+        Task<bool> DoesExistAsync(Guid id);
     }
 }

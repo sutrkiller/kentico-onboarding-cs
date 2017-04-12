@@ -79,7 +79,7 @@ namespace ItemsListApp.Api.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (await _existingItemsService.ExistsAsync(item.Id))
+            if (await _existingItemsService.DoesExistAsync(item.Id))
             {
                 var editedItem = await _existingItemsService.ReplaceAsync(item);
                 return Ok(editedItem);
@@ -98,7 +98,7 @@ namespace ItemsListApp.Api.Controllers
             {
                 return BadRequest(ModelState);
             }
-            if (!await _existingItemsService.ExistsAsync(id))
+            if (!await _existingItemsService.DoesExistAsync(id))
             {
                 return NotFound();
             }

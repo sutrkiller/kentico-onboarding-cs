@@ -51,7 +51,7 @@ namespace ItemsListApp.Api.UnitTests.Tests.Controllers
             var expected = new Item
             {
                 Id = itemId,
-                Text = "InvalidateText of required item",
+                Text = "Text of required item",
             };
             _itemsRepository.GetByIdAsync(itemId).Returns(expected);
 
@@ -158,9 +158,9 @@ namespace ItemsListApp.Api.UnitTests.Tests.Controllers
             var expected = new Item
             {
                 Id = new Guid("999EA6F0-4139-4D54-B4DD-4976A35D1DFA"),
-                Text = "InvalidateText of required item",
+                Text = "Text of required item",
             };
-            _existingItemsService.ExistsAsync(expected.Id).Returns(true);
+            _existingItemsService.DoesExistAsync(expected.Id).Returns(true);
             _existingItemsService.ReplaceAsync(expected).Returns(expected);
 
             var action = await _itemsController.PutAsync(expected);
@@ -178,14 +178,14 @@ namespace ItemsListApp.Api.UnitTests.Tests.Controllers
             var putItem = new Item
             {
                 Id = new Guid("3C4A53C3-C24F-4755-B871-9F2059A09F74"),
-                Text = "InvalidateText of required item",
+                Text = "Text of required item",
             };
             var expected = new Item
             {
                 Id = new Guid("999EA6F0-4139-4D54-B4DD-4976A35D1DFA"),
                 Text = putItem.Text,
             };
-            _existingItemsService.ExistsAsync(putItem.Id).Returns(false);
+            _existingItemsService.DoesExistAsync(putItem.Id).Returns(false);
             _createItemsService.CreateNewAsync(putItem, putItem.Id).Returns(expected);
 
             var action = await _itemsController.PutAsync(putItem);
@@ -213,7 +213,7 @@ namespace ItemsListApp.Api.UnitTests.Tests.Controllers
         public async Task Delete_IdOfExistingItem_ReturnsNoContentStatusCode()
         {
             var id = new Guid("999EA6F0-4139-4D54-B4DD-4976A35D1DFA");
-            _existingItemsService.ExistsAsync(id).Returns(true);
+            _existingItemsService.DoesExistAsync(id).Returns(true);
 
 
             var action = await _itemsController.DeleteAsync(id);
@@ -240,7 +240,7 @@ namespace ItemsListApp.Api.UnitTests.Tests.Controllers
         public async Task Delete_IdOfNonExistingItem_ReturnsNotFoundStatusCode()
         {
             var id = new Guid("999EA6F0-4139-4D54-B4DD-4976A35D1DFA");
-            _existingItemsService.ExistsAsync(id).Returns(false);
+            _existingItemsService.DoesExistAsync(id).Returns(false);
 
 
             var action = await _itemsController.DeleteAsync(id);
@@ -289,7 +289,7 @@ namespace ItemsListApp.Api.UnitTests.Tests.Controllers
                     .Build();
 
                 yield return new ItemPostTestCaseBuilder()
-                    .InvalidItem();
+                    .BuildInvalidItem();
             }
 
             IEnumerator IEnumerable.GetEnumerator()
@@ -338,7 +338,7 @@ namespace ItemsListApp.Api.UnitTests.Tests.Controllers
                     .Build();
 
                 yield return new ItemPutTestCaseBuilder()
-                    .InvalidItem();
+                    .BuildInvalidItem();
             }
 
             IEnumerator IEnumerable.GetEnumerator()

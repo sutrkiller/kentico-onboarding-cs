@@ -51,7 +51,7 @@ namespace ItemsListApp.Api.UnitTests.Helpers
         public TestCaseData Build() 
             => new TestCaseData(Item, _invalidParts);
 
-        public TestCaseData InvalidItem()
+        public TestCaseData BuildInvalidItem()
         {
             _invalidParts.Add(nameof(Item));
             return new TestCaseData(null, _invalidParts);
