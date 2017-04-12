@@ -30,7 +30,6 @@ namespace ItemsListApp.Api.Controllers
         // GET api/items
         public async Task<IHttpActionResult> GetAsync()
         {
-            //var allItems = await _itemsesRepository.GetAllAsync();
             var allItems = await _itemsRepository.GetAllAsync();
             Thread.Sleep(2000);
             return Ok(allItems);

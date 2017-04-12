@@ -6,7 +6,7 @@ namespace ItemsListApp.Services.StaticWrappers
 {
     internal class DateTimeService : IDateTimeService
     {
-        public Task<System.DateTime> GetCurrentDateAsync()
+        public Task<DateTime> GetCurrentDateAsync()
         {
             return Task.FromResult(DateTime.Now);
         }
