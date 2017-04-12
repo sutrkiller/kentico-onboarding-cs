@@ -21,7 +21,10 @@ namespace ItemsListApp.Services.Items
         }
 
         public async Task<Item> CreateNewAsync(Item item)
-            => await CreateNewAsync(item, await _identifierService.GenerateIdAsync());
+            => await CreateNewAsync(item,
+                item.Id != default(Guid) 
+                ? item.Id 
+                : await _identifierService.GenerateIdAsync());
 
         public async Task<Item> ReplaceExistingAsync(Item item)
         {
